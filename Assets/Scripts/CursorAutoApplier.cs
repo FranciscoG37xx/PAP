@@ -3,23 +3,19 @@ using UnityEngine.UI;
 
 public class CursorAutoApplier : MonoBehaviour
 {
-    public Texture2D pointerCursor; // A textura da mãozinha
+    public Texture2D pointerCursor;
     public CursorMode cursorMode = CursorMode.Auto;
 
     void Start()
     {
-        if (pointerCursor == null)
-        {
-            Debug.LogError("Nenhum cursor de mãozinha atribuído no CursorAutoApplier!");
-            return;
-        }
+        ApplyCursorToAllButtons();
+    }
 
-        // Vai buscar todos os botões na cena
-        Button[] allButtons = FindObjectsOfType<Button>();
-
+    public void ApplyCursorToAllButtons()
+    {
+        Button[] allButtons = FindObjectsOfType<Button>(true); // <-- 'true' inclui botões desativados
         foreach (Button btn in allButtons)
         {
-            // Verifica se o botão já tem o script para evitar duplicados
             if (btn.gameObject.GetComponent<PointerCursorChanger>() == null)
             {
                 PointerCursorChanger changer = btn.gameObject.AddComponent<PointerCursorChanger>();
@@ -29,4 +25,5 @@ public class CursorAutoApplier : MonoBehaviour
         }
     }
 }
+
 
