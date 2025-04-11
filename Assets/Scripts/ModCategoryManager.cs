@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class ModCategorySelector : MonoBehaviour
 {
-    public GameObject[] categoryPanels; // Todos os painéis (visíveis ao mesmo tempo)
+    public GameObject[] categoryPanels;   // Os painÃ©is (categorias)
     public Button leftArrow;
     public Button rightArrow;
 
@@ -13,27 +13,35 @@ public class ModCategorySelector : MonoBehaviour
     void Start()
     {
         HighlightSelected();
+
         leftArrow.onClick.AddListener(Previous);
         rightArrow.onClick.AddListener(Next);
+
+        // Adicionar listeners de clique nos botÃµes dentro dos painÃ©is
+        foreach (GameObject panel in categoryPanels)
+        {
+            Button panelButton = panel.GetComponentInChildren<Button>(); // â† procura o botÃ£o dentro do painel
+            if (panelButton != null)
+            {
+                GameObject capturedPanel = panel; 
+                panelButton.onClick.AddListener(() => OnPanelClicked(capturedPanel));
+            }
+        }
     }
 
     void Update()
     {
-        // Garante que [Enter] só executa ação se nenhum botão estiver "focused"
-        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) &&
-            !EventSystem.current.currentSelectedGameObject)
-        {
-            SelectCurrent();
-        }
-
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             Previous();
 
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             Next();
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) &&
+            !EventSystem.current.currentSelectedGameObject)
+        {
             SelectCurrent();
+        }
     }
 
     void Previous()
@@ -54,15 +62,43 @@ public class ModCategorySelector : MonoBehaviour
         {
             Transform border = categoryPanels[i].transform.Find("Border");
             if (border != null)
-                border.gameObject.SetActive(i == currentIndex); // mostra só o contorno do selecionado
+                border.gameObject.SetActive(i == currentIndex);
         }
     }
 
     void SelectCurrent()
     {
-        Debug.Log("Selecionaste: " + categoryPanels[currentIndex].name);
-        // Aqui podes abrir o menu da categoria ou outro painel com mods
+        Debug.Log("Selecionaste com ENTER: " + categoryPanels[currentIndex].name);
+        AbrirCategoria(categoryPanels[currentIndex]);
+    }
+
+    void OnPanelClicked(GameObject clickedPanel)
+    {
+        Debug.Log("Selecionaste com CLIQUE: " + clickedPanel.name);
+
+        // Atualiza o Ã­ndice atual
+        for (int i = 0; i < categoryPanels.Length; i++)
+        {
+            if (categoryPanels[i] == clickedPanel)
+            {
+                currentIndex = i;
+                HighlightSelected();
+                break;
+            }
+        }
+
+        AbrirCategoria(clickedPanel);
+    }
+
+    void AbrirCategoria(GameObject painel)
+    {
+        Debug.Log("Abrindo categoria: " + painel.name);
+
+        // Aqui fazer o que quiser com a categoria selecionada
+        // Exemplo: painel.transform.Find("SubMenu").gameObject.SetActive(true);
     }
 }
+
+
 
 
