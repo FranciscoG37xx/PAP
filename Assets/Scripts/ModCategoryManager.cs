@@ -4,9 +4,10 @@ using UnityEngine.EventSystems;
 
 public class ModCategorySelector : MonoBehaviour
 {
-    public GameObject[] categoryPanels;   // Os painéis (categorias)
+    public GameObject[] categoryPanels;     // Os painéis de categorias (ex: pintura, jantes, etc.)
     public Button leftArrow;
     public Button rightArrow;
+    public GameObject panelMods;            // ← Referência ao Panel_Mods (menu principal das mods)
 
     private int currentIndex = 0;
 
@@ -20,12 +21,14 @@ public class ModCategorySelector : MonoBehaviour
         // Adicionar listeners de clique nos botões dentro dos painéis
         foreach (GameObject panel in categoryPanels)
         {
-            Button panelButton = panel.GetComponentInChildren<Button>(); // ← procura o botão dentro do painel
+            Button panelButton = panel.GetComponentInChildren<Button>();
             if (panelButton != null)
             {
-                GameObject capturedPanel = panel; 
+                GameObject capturedPanel = panel;
                 panelButton.onClick.AddListener(() => OnPanelClicked(capturedPanel));
             }
+
+            
         }
     }
 
@@ -90,14 +93,25 @@ public class ModCategorySelector : MonoBehaviour
         AbrirCategoria(clickedPanel);
     }
 
-    void AbrirCategoria(GameObject painel)
+    void AbrirCategoria(GameObject painelSelecionado)
     {
-        Debug.Log("Abrindo categoria: " + painel.name);
+        Debug.Log("Abrindo categoria: " + painelSelecionado.name);
 
-        // Aqui fazer o que quiser com a categoria selecionada
-        // Exemplo: painel.transform.Find("SubMenu").gameObject.SetActive(true);
+        // Desativa o menu principal de mods
+        if (panelMods != null)
+            panelMods.SetActive(false);
+
+        // Desativa todos os painéis de categoria
+        foreach (GameObject painel in categoryPanels)
+        {
+            painel.SetActive(false);
+        }
+
+        // Ativa só o painel da categoria selecionada
+        painelSelecionado.SetActive(true);
     }
 }
+
 
 
 
