@@ -73,6 +73,7 @@ public class ModCategorySelector : MonoBehaviour
     {
         Debug.Log("Selecionaste com ENTER: " + categoryPanels[currentIndex].name);
         AbrirCategoria(categoryPanels[currentIndex]);
+        
     }
 
     void OnPanelClicked(GameObject clickedPanel)

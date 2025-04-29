@@ -1,14 +1,37 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class ColorGridGenerator : MonoBehaviour
 {
-    public GameObject colorButtonPrefab; // O teu prefab do botão de cor
-    public Transform gridParent;         // O painel com Grid Layout Group
+    public GameObject colorButtonPrefab;
+    public Transform gridParent;
 
-    public int columns = 18;             // Número de colunas (como na imagem)
-    public int rows = 12;                // Número de linhas
+    public Texture2D pointerCursor;
+    public CursorMode cursorMode = CursorMode.Auto;
+
+     public Renderer carroRenderer; // Assign o Renderer do carro
+    public AudioSource audioSource; // O componente que vai tocar o som
+    public AudioClip pintarSom;    // O som a tocar quando escolhe uma cor
+
+    public int columns = 10;
+
+    // Cada linha representa uma gama de cor: [claro, médio (principal), escuro]
+    private Color[][] colorRows = new Color[][]
+    {
+        new Color[] { Color.white, new Color(0.7f, 0.7f, 0.7f), Color.black },                     // 1. Escala de cinzentos
+        new Color[] { new Color(1f, 0.9f, 0.8f), new Color(1f, 0.5f, 0f), new Color(0.4f, 0.2f, 0f) },   // 2. Laranja
+        new Color[] { new Color(1f, 1f, 0.8f), new Color(1f, 0.9f, 0.1f), new Color(0.4f, 0.3f, 0f) },   // 3. Amarelo
+        new Color[] { new Color(0.9f, 1f, 0.8f), new Color(0.6f, 0.8f, 0.1f), new Color(0.2f, 0.3f, 0f) }, // 4. Verde-limão
+        new Color[] { new Color(0.8f, 1f, 0.8f), new Color(0.2f, 0.7f, 0.2f), new Color(0f, 0.3f, 0f) },   // 5. Verde
+        new Color[] { new Color(0.8f, 1f, 1f), new Color(0.1f, 0.8f, 0.6f), new Color(0f, 0.3f, 0.2f) },   // 6. Verde-água
+        new Color[] { new Color(0.7f, 1f, 1f), new Color(0f, 0.6f, 0.8f), new Color(0f, 0.2f, 0.3f) },     // 7. Ciano
+        new Color[] { new Color(0.7f, 0.9f, 1f), new Color(0.1f, 0.4f, 1f), new Color(0f, 0f, 0.4f) },     // 8. Azul
+        new Color[] { new Color(0.8f, 0.8f, 1f), new Color(0.4f, 0.2f, 0.8f), new Color(0.2f, 0f, 0.4f) }, // 9. Azul-roxo
+        new Color[] { new Color(0.9f, 0.8f, 1f), new Color(0.7f, 0.3f, 1f), new Color(0.4f, 0f, 0.5f) },   // 10. Roxo
+        new Color[] { new Color(1f, 0.7f, 1f), new Color(0.8f, 0.1f, 0.5f), new Color(0.3f, 0f, 0.2f) },   // 11. Magenta
+        new Color[] { new Color(1f, 0.8f, 0.9f), new Color(1f, 0.4f, 0.6f), new Color(0.4f, 0f, 0.1f) },   // 12. Rosa
+        new Color[] { new Color(1f, 0.85f, 0.85f), new Color(0.9f, 0.2f, 0.2f), new Color(0.3f, 0f, 0f) }  // 13. Vermelho
+    };
 
     void Start()
     {
@@ -17,42 +40,64 @@ public class ColorGridGenerator : MonoBehaviour
 
     void GenerateColorGrid()
     {
-        // Limpa o painel antes
         foreach (Transform child in gridParent)
-        {
             Destroy(child.gameObject);
-        }
 
-        for (int y = 0; y < rows; y++)
+        foreach (Color[] row in colorRows)
         {
-            float hue = (float)y / rows;
+            Color bright = row[0];
+            Color baseColor = row[1];
+            Color dark = row[2];
 
             for (int x = 0; x < columns; x++)
             {
-                float value = 1f - (float)x / columns; // escurece da esquerda para direita
-                Color color = Color.HSVToRGB(hue, 1f, value);
+                float t = x / (float)(columns - 1);
+                Color color;
 
-                GameObject colorButton = Instantiate(colorButtonPrefab, gridParent);
-                Image img = colorButton.GetComponent<Image>();
+                if (t < 0.5f)
+                    color = Color.Lerp(bright, baseColor, t * 2);
+                else
+                    color = Color.Lerp(baseColor, dark, (t - 0.5f) * 2);
+
+                GameObject btn = Instantiate(colorButtonPrefab, gridParent);
+                Image img = btn.GetComponent<Image>();
                 if (img != null) img.color = color;
 
-                // (Opcional) Guardar a cor se quiseres usar depois
-                Button btn = colorButton.GetComponent<Button>();
-                if (btn != null)
+                Button b = btn.GetComponent<Button>();
+                if (b != null)
                 {
-                    Color pickedColor = color;
-                    btn.onClick.AddListener(() => OnColorSelected(pickedColor));
+                    Color picked = color;
+                    b.onClick.AddListener(() => OnColorSelected(picked));
                 }
             }
+            PointerCursorChanger changer = colorButtonPrefab.AddComponent<PointerCursorChanger>();
+            changer.customCursor = pointerCursor;
+            changer.cursorMode = CursorMode.Auto;
         }
     }
 
     void OnColorSelected(Color selected)
     {
         Debug.Log("Cor selecionada: " + selected);
-        // Aqui podes aplicar a cor ao carro, por exemplo
-        // carroRenderer.material.color = selected;
+        
+         if (carroRenderer != null)
+        {
+            carroRenderer.material.color = selected;
+        }
+
+        if (audioSource != null && pintarSom != null)
+        {
+            audioSource.PlayOneShot(pintarSom);
+        }
     }
 }
+
+
+
+
+
+
+
+
 
 
