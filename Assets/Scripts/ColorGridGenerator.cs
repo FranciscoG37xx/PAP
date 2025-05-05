@@ -38,7 +38,7 @@ public class ColorGridGenerator : MonoBehaviour
         GenerateColorGrid();
     }
 
-    void GenerateColorGrid()
+    public void GenerateColorGrid()
     {
         foreach (Transform child in gridParent)
             Destroy(child.gameObject);

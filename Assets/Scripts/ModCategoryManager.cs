@@ -4,10 +4,11 @@ using UnityEngine.EventSystems;
 
 public class ModCategorySelector : MonoBehaviour
 {
-    public GameObject[] categoryPanels;     // Os painéis de categorias (ex: pintura, jantes, etc.)
+    public GameObject[] categoryPanels; // Panel_Pintura, Panel_Capôs, etc. (clicáveis)
+    public GameObject[] optionPanels;   // Panel_Pintura_Options, Panel_Capôs_Options, etc. (conteúdo)
     public Button leftArrow;
     public Button rightArrow;
-    public GameObject panelMods;            // ← Referência ao Panel_Mods (menu principal das mods)
+    public GameObject panelMods;        // Panel_Mods principal
 
     private int currentIndex = 0;
 
@@ -18,17 +19,26 @@ public class ModCategorySelector : MonoBehaviour
         leftArrow.onClick.AddListener(Previous);
         rightArrow.onClick.AddListener(Next);
 
-        // Adicionar listeners de clique nos botões dentro dos painéis
-        foreach (GameObject panel in categoryPanels)
+        for (int i = 0; i < categoryPanels.Length; i++)
         {
-            Button panelButton = panel.GetComponentInChildren<Button>();
-            if (panelButton != null)
+            int index = i;
+            GameObject panel = categoryPanels[i];
+
+            // Liga botões filhos
+            Button[] buttons = panel.GetComponentsInChildren<Button>(true);
+            foreach (Button btn in buttons)
             {
-                GameObject capturedPanel = panel;
-                panelButton.onClick.AddListener(() => OnPanelClicked(capturedPanel));
+                btn.onClick.AddListener(() => OnPanelClicked(index));
             }
 
-            
+            // Liga clique direto no painel
+            EventTrigger trigger = panel.GetComponent<EventTrigger>();
+            if (trigger == null) trigger = panel.AddComponent<EventTrigger>();
+
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener((data) => { OnPanelClicked(index); });
+            trigger.triggers.Add(entry);
         }
     }
 
@@ -72,46 +82,66 @@ public class ModCategorySelector : MonoBehaviour
     void SelectCurrent()
     {
         Debug.Log("Selecionaste com ENTER: " + categoryPanels[currentIndex].name);
-        AbrirCategoria(categoryPanels[currentIndex]);
-        
+        AbrirCategoria(currentIndex);
     }
 
-    void OnPanelClicked(GameObject clickedPanel)
+    void OnPanelClicked(int index)
     {
-        Debug.Log("Selecionaste com CLIQUE: " + clickedPanel.name);
+        Debug.Log("Selecionaste com CLIQUE: " + categoryPanels[index].name);
+        currentIndex = index;
+        HighlightSelected();
+        AbrirCategoria(index);
+    }
 
-        // Atualiza o índice atual
-        for (int i = 0; i < categoryPanels.Length; i++)
+    void AbrirCategoria(int index)
+    {
+        if (index < 0 || index >= categoryPanels.Length || index >= optionPanels.Length)
         {
-            if (categoryPanels[i] == clickedPanel)
-            {
-                currentIndex = i;
-                HighlightSelected();
-                break;
-            }
+            Debug.LogWarning("Índice inválido ao abrir categoria.");
+            return;
         }
 
-        AbrirCategoria(clickedPanel);
-    }
+        GameObject painelSelecionado = categoryPanels[index];
+        GameObject painelOpcao = optionPanels[index];
 
-    void AbrirCategoria(GameObject painelSelecionado)
-    {
         Debug.Log("Abrindo categoria: " + painelSelecionado.name);
 
-        // Desativa o menu principal de mods
+        // Oculta o menu principal de mods
         if (panelMods != null)
             panelMods.SetActive(false);
 
-        // Desativa todos os painéis de categoria
-        foreach (GameObject painel in categoryPanels)
+        // Desativa todos os painéis de opções
+        foreach (GameObject option in optionPanels)
         {
-            painel.SetActive(false);
+            if (option != null)
+                option.SetActive(false);
         }
 
-        // Ativa só o painel da categoria selecionada
-        painelSelecionado.SetActive(true);
+        // Ativa apenas o painel de opções correspondente
+        if (painelOpcao != null)
+            painelOpcao.SetActive(true);
+
+        // Se for categoria de pintura, ativa o ColorGrid
+        if (painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor"))
+        {
+            var colorGrid = FindObjectOfType<ColorGridGenerator>();
+            if (colorGrid != null)
+            {
+                colorGrid.gameObject.SetActive(true);
+                colorGrid.GenerateColorGrid();
+            }
+        }
+        else
+        {
+            // Se não for pintura, certifica-se que o ColorGrid está escondido
+            var colorGrid = FindObjectOfType<ColorGridGenerator>();
+            if (colorGrid != null)
+                colorGrid.gameObject.SetActive(false);
+        }
     }
 }
+
+
 
 
 

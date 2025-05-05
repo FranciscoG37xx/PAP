@@ -4599,10 +4599,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   categoryPanels:
-  - {fileID: 1497689297}
-  - {fileID: 1186344603}
-  - {fileID: 1340931840}
-  - {fileID: 775209352}
+  - {fileID: 719755000}
+  - {fileID: 2134889559}
+  - {fileID: 1451533456}
+  - {fileID: 50044257}
   optionPanels:
   - {fileID: 1497689297}
   - {fileID: 1186344603}
