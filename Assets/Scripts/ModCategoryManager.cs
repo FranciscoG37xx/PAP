@@ -1,19 +1,31 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class ModCategorySelector : MonoBehaviour
 {
-    public GameObject[] categoryPanels; // Panel_Pintura, Panel_Capôs, etc. (clicáveis)
-    public GameObject[] optionPanels;   // Panel_Pintura_Options, Panel_Capôs_Options, etc. (conteúdo)
+    public GameObject[] categoryPanels;
+    public GameObject[] optionPanels;
     public Button leftArrow;
     public Button rightArrow;
-    public GameObject panelMods;        // Panel_Mods principal
+    public GameObject panelMods;
 
+    private Coroutine moverCarroCoroutine;
     private int currentIndex = 0;
+
+    [SerializeField] private GameObject carro;
+    private Vector3 carroPosicaoOriginal;
+    [SerializeField] private Vector3 deslocamentoPintura = new Vector3(2f, 0f, 0f);
 
     void Start()
     {
+        if (carro != null)
+        {
+            carroPosicaoOriginal = carro.transform.position;
+            Debug.Log("Posição original do carro: " + carroPosicaoOriginal);
+        }
+
         HighlightSelected();
 
         leftArrow.onClick.AddListener(Previous);
@@ -24,19 +36,19 @@ public class ModCategorySelector : MonoBehaviour
             int index = i;
             GameObject panel = categoryPanels[i];
 
-            // Liga botões filhos
             Button[] buttons = panel.GetComponentsInChildren<Button>(true);
             foreach (Button btn in buttons)
             {
                 btn.onClick.AddListener(() => OnPanelClicked(index));
             }
 
-            // Liga clique direto no painel
             EventTrigger trigger = panel.GetComponent<EventTrigger>();
             if (trigger == null) trigger = panel.AddComponent<EventTrigger>();
 
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerClick;
+            EventTrigger.Entry entry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerClick
+            };
             entry.callback.AddListener((data) => { OnPanelClicked(index); });
             trigger.triggers.Add(entry);
         }
@@ -106,40 +118,80 @@ public class ModCategorySelector : MonoBehaviour
 
         Debug.Log("Abrindo categoria: " + painelSelecionado.name);
 
-        // Oculta o menu principal de mods
         if (panelMods != null)
             panelMods.SetActive(false);
 
-        // Desativa todos os painéis de opções
         foreach (GameObject option in optionPanels)
         {
             if (option != null)
                 option.SetActive(false);
         }
 
-        // Ativa apenas o painel de opções correspondente
         if (painelOpcao != null)
             painelOpcao.SetActive(true);
 
-        // Se for categoria de pintura, ativa o ColorGrid
-        if (painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor"))
+        bool isPintura = painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor");
+
+        var colorGrid = FindObjectOfType<ColorGridGenerator>();
+        if (colorGrid != null)
+            colorGrid.gameObject.SetActive(isPintura);
+
+        if (isPintura && colorGrid != null)
         {
-            var colorGrid = FindObjectOfType<ColorGridGenerator>();
-            if (colorGrid != null)
-            {
-                colorGrid.gameObject.SetActive(true);
-                colorGrid.GenerateColorGrid();
-            }
+            colorGrid.GenerateColorGrid();
         }
-        else
+
+        if (carro != null)
         {
-            // Se não for pintura, certifica-se que o ColorGrid está escondido
-            var colorGrid = FindObjectOfType<ColorGridGenerator>();
-            if (colorGrid != null)
-                colorGrid.gameObject.SetActive(false);
+            Vector3 destino = isPintura ? carroPosicaoOriginal + deslocamentoPintura : carroPosicaoOriginal;
+            if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(destino, 0.6f));
         }
     }
+
+    public void FecharPainelDePintura()
+    {
+        GameObject painelPintura = null;
+        foreach (GameObject painel in optionPanels)
+        {
+            if (painel != null && painel.name.ToLower().Contains("pintura"))
+            {
+                painel.SetActive(false);
+                painelPintura = painel;
+                break;
+            }
+        }
+
+        if (panelMods != null)
+            panelMods.SetActive(true);
+
+        var colorGrid = FindObjectOfType<ColorGridGenerator>();
+        if (colorGrid != null)
+            colorGrid.gameObject.SetActive(false);
+
+        if (carro != null)
+        {
+            if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal, 0.6f));
+        }
+    }
+
+    IEnumerator MoverCarroSuavemente(Vector3 destino, float duracao = 0.5f)
+    {
+        Vector3 origem = carro.transform.position;
+        float tempoDecorrido = 0f;
+
+        while (tempoDecorrido < duracao)
+        {
+            carro.transform.position = Vector3.Lerp(origem, destino, tempoDecorrido / duracao);
+            tempoDecorrido += Time.deltaTime;
+            yield return null;
+        }
+
+        carro.transform.position = destino;
+    }
 }
+
 
 
 

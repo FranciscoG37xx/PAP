@@ -9,7 +9,7 @@ public class ColorGridGenerator : MonoBehaviour
     public Texture2D pointerCursor;
     public CursorMode cursorMode = CursorMode.Auto;
 
-     public Renderer carroRenderer; // Assign o Renderer do carro
+    public Renderer carroRenderer; // Assign o Renderer do carro
     public AudioSource audioSource; // O componente que vai tocar o som
     public AudioClip pintarSom;    // O som a tocar quando escolhe uma cor
 
@@ -70,6 +70,7 @@ public class ColorGridGenerator : MonoBehaviour
                     b.onClick.AddListener(() => OnColorSelected(picked));
                 }
             }
+
             PointerCursorChanger changer = colorButtonPrefab.AddComponent<PointerCursorChanger>();
             changer.customCursor = pointerCursor;
             changer.cursorMode = CursorMode.Auto;
@@ -79,10 +80,15 @@ public class ColorGridGenerator : MonoBehaviour
     void OnColorSelected(Color selected)
     {
         Debug.Log("Cor selecionada: " + selected);
-        
-         if (carroRenderer != null)
+
+        if (carroRenderer != null)
         {
-            carroRenderer.material.color = selected;
+            Material mat = carroRenderer.material;
+            mat.color = selected;
+
+            // Aumenta o brilho/gloss e metalicidade
+            mat.SetFloat("_Metallic", 0.5f);    
+            mat.SetFloat("_Glossiness", 0.8f);  // Quanto mais alto, mais polido
         }
 
         if (audioSource != null && pintarSom != null)
@@ -91,6 +97,7 @@ public class ColorGridGenerator : MonoBehaviour
         }
     }
 }
+
 
 
 

@@ -13,17 +13,17 @@ public class CameraMovement : MonoBehaviour
 
     void Update()
     {
-        //Se o cursor estiver sobre a UI, não faz nada
+        //Se o cursor estiver sobre a UI, nï¿½o faz nada
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
-        //Se clicou no botão esquerdo do rato, guarda a posição
+        //Se clicou no botï¿½o esquerdo do rato, guarda a posiï¿½ï¿½o
         if (Input.GetMouseButtonDown(0))
         {
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
         }
 
-        //Se estiver a manter pressionado, roda a câmara
+        //Se estiver a manter pressionado, roda a cï¿½mara
         if (Input.GetMouseButton(0))
         {
             Vector3 direction = previousPosition - cam.ScreenToViewportPoint(Input.mousePosition);
@@ -31,5 +31,8 @@ public class CameraMovement : MonoBehaviour
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
         }
     }
-}
+} 
+
+
+
 
