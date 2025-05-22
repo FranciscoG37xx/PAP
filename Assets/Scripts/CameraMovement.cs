@@ -13,17 +13,17 @@ public class CameraMovement : MonoBehaviour
 
     void Update()
     {
-        //Se o cursor estiver sobre a UI, n�o faz nada
+        //Se o cursor estiver sobre a UI, nao faz nada
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
-        //Se clicou no bot�o esquerdo do rato, guarda a posi��o
+        //Se clicou no bot�o esquerdo do rato, guarda a posicao
         if (Input.GetMouseButtonDown(0))
         {
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
         }
 
-        //Se estiver a manter pressionado, roda a c�mara
+        //Se estiver a manter pressionado, roda a camara
         if (Input.GetMouseButton(0))
         {
             Vector3 direction = previousPosition - cam.ScreenToViewportPoint(Input.mousePosition);
