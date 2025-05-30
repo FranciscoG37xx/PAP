@@ -133,14 +133,14 @@ public class ModCategorySelector : MonoBehaviour
         bool isPintura = painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor");
 
         var colorGrid = FindObjectOfType<ColorGridGenerator>();
-        if (colorGrid != null)
-            colorGrid.gameObject.SetActive(isPintura);
-
-        if (isPintura && colorGrid != null)
-        {
-            colorGrid.GenerateColorGrid();
-        }
-
+       
+       if (colorGrid != null)
+{
+    if (isPintura)
+        colorGrid.AtivarColorGrid();
+    else
+        colorGrid.gameObject.SetActive(false);
+}
         if (carro != null)
         {
             Vector3 destino = isPintura ? carroPosicaoOriginal + deslocamentoPintura : carroPosicaoOriginal;

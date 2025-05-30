@@ -35,8 +35,21 @@ public class ColorGridGenerator : MonoBehaviour
 
     void Start()
     {
-        GenerateColorGrid();
+        
     }
+
+private bool gridGerado = false;
+
+public void AtivarColorGrid()
+{
+    if (!gridGerado)
+    {
+        GenerateColorGrid();
+        gridGerado = true;
+    }
+
+    gameObject.SetActive(true);
+}
 
     public void GenerateColorGrid()
     {
