@@ -2,20 +2,22 @@ using UnityEngine;
 
 public class WheelSwitcher : MonoBehaviour
 {
-    public GameObject[] wheelPrefabs;             // Prefabs de jantes disponíveis
-    public GameObject[] currentWheels;            // As jantes atuais do carro, usadas como referência
-    private GameObject[] activeWheels = new GameObject[4]; // Jantes atualmente ativas na cena
+    public GameObject[] wheelPrefabs;      // Prefabs das jantes disponíveis
+    public GameObject[] currentWheels;     // Jantes atuais do carro, referência de posição
+    private GameObject[] activeWheels = new GameObject[4];
 
     private int currentIndex = 0;
 
-    // Chamada pelas setas (direita)
+    // Referência opcional para ajustar rotação e escala padrão das jantes
+    public Vector3 defaultWheelRotation = Vector3.zero;
+    public Vector3 defaultWheelScale = Vector3.one;
+
     public void SwitchToNextWheels()
     {
         currentIndex = (currentIndex + 1) % wheelPrefabs.Length;
         SwitchWheels(currentIndex);
     }
 
-    // Chamada pelas setas (esquerda)
     public void SwitchToPreviousWheels()
     {
         currentIndex = (currentIndex - 1 + wheelPrefabs.Length) % wheelPrefabs.Length;
@@ -24,38 +26,38 @@ public class WheelSwitcher : MonoBehaviour
 
     private void SwitchWheels(int index)
     {
-        // Validação
         if (wheelPrefabs.Length == 0 || currentWheels.Length != 4)
         {
-            Debug.LogWarning("Certifica-te que tens 4 rodas atuais e prefabs definidos.");
+            Debug.LogWarning("Faltam prefabs ou referência de rodas!");
             return;
         }
 
-        // Destrói as rodas anteriores
+        // Apagar rodas ativas antigas
         for (int i = 0; i < activeWheels.Length; i++)
         {
             if (activeWheels[i] != null)
                 Destroy(activeWheels[i]);
         }
 
-        // Instancia as novas rodas com base na posição, rotação e escala das atuais
+        // Instanciar novas jantes nas posições corretas
         for (int i = 0; i < 4; i++)
         {
             GameObject newWheel = Instantiate(wheelPrefabs[index]);
 
-            // Copiar posição, rotação e escala da roda atual
-            newWheel.transform.position = currentWheels[i].transform.position;
-            newWheel.transform.rotation = currentWheels[i].transform.rotation;
-            newWheel.transform.localScale = currentWheels[i].transform.localScale;
+            Transform refWheel = currentWheels[i].transform;
 
-            // Torna a nova roda filha da original (opcional)
-            newWheel.transform.SetParent(currentWheels[i].transform.parent);
+            newWheel.transform.SetParent(refWheel.parent);
+            newWheel.transform.position = refWheel.position;
+            newWheel.transform.rotation = Quaternion.Euler(defaultWheelRotation);
+            newWheel.transform.localScale = defaultWheelScale;
 
             activeWheels[i] = newWheel;
+
+            // Opcional: desativar a roda original visível
+            currentWheels[i].SetActive(false);
         }
     }
 
-    // Atualizar rodas de referência ao mudar de carro
     public void SetCurrentWheels(GameObject[] newReferenceWheels)
     {
         if (newReferenceWheels.Length == 4)
@@ -64,8 +66,11 @@ public class WheelSwitcher : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("As rodas de referência precisam de exatamente 4 objetos.");
+            Debug.LogWarning("Precisam ser exatamente 4 rodas de referência.");
         }
     }
 }
+
+
+
 
