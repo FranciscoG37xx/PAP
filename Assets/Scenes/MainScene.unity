@@ -5624,7 +5624,11 @@ MonoBehaviour:
   - {fileID: 2113738878}
   - {fileID: 2113738875}
   - {fileID: 2113738876}
-  defaultWheelRotation: {x: 0, y: 0, z: 0}
+  wheelRotations:
+  - {x: 0, y: 90, z: 0}
+  - {x: 0, y: -90, z: 0}
+  - {x: 0, y: 90, z: 0}
+  - {x: 0, y: -90, z: 0}
   defaultWheelScale: {x: 1, y: 1, z: 1}
 --- !u!1 &2073591174
 GameObject:
