@@ -5629,7 +5629,9 @@ MonoBehaviour:
   - {x: 0, y: -90, z: 0}
   - {x: 0, y: 90, z: 0}
   - {x: 0, y: -90, z: 0}
-  defaultWheelScale: {x: 1, y: 1, z: 1}
+  defaultWheelScale: {x: 1.5, y: 1.5, z: 1.5}
+  offsetEsquerda: -0.07
+  offsetDireita: 0.07
 --- !u!1 &2073591174
 GameObject:
   m_ObjectHideFlags: 0
@@ -5936,6 +5938,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7602358426409921745, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7244897364331027445, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -5972,6 +5978,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: dcfbfbe077f16ee42acf44905339ad06, type: 2}
+    - target: {fileID: -2091423622464783998, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -1978698781629152352, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -6052,6 +6062,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: f7982ad6bd53c764d91b24953e64ffcd, type: 2}
+    - target: {fileID: 6159876368539543177, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7829752137543051794, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
