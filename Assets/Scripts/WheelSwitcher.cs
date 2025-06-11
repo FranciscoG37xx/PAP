@@ -37,7 +37,6 @@ public class WheelSwitcher : MonoBehaviour
             return;
         }
 
-        // Se voltar à jante original (posição 0)
         if (index == 0)
         {
             for (int i = 0; i < 4; i++)
@@ -47,9 +46,13 @@ public class WheelSwitcher : MonoBehaviour
 
                 currentWheels[i].SetActive(true);
 
-                // Ativa apenas os filhos (jantes, disco, etc.)
                 for (int j = 0; j < currentWheels[i].transform.childCount; j++)
-                    currentWheels[i].transform.GetChild(j).gameObject.SetActive(true);
+                {
+                    Transform child = currentWheels[i].transform.GetChild(j);
+                    string nameLower = child.name.ToLower();
+                    if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
+                        child.gameObject.SetActive(true);
+                }
             }
 
             nomeJanteSelecionada = "Original";
@@ -57,21 +60,23 @@ public class WheelSwitcher : MonoBehaviour
             return;
         }
 
-        // Atualiza o nome da jante
         nomeJanteSelecionada = wheelPrefabs[index].name.Replace("(Clone)", "").Trim();
         Debug.Log("Jante selecionada: " + nomeJanteSelecionada);
 
-        // Esconde filhos das rodas atuais (mantém a borracha)
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < currentWheels[i].transform.childCount; j++)
-                currentWheels[i].transform.GetChild(j).gameObject.SetActive(false);
+            {
+                Transform child = currentWheels[i].transform.GetChild(j);
+                string nameLower = child.name.ToLower();
+                if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
+                    child.gameObject.SetActive(false);
+            }
 
             if (activeWheels[i] != null)
                 Destroy(activeWheels[i]);
         }
 
-        // Instancia jantes novas
         for (int i = 0; i < 4; i++)
         {
             GameObject newWheel = Instantiate(wheelPrefabs[index]);
@@ -79,13 +84,30 @@ public class WheelSwitcher : MonoBehaviour
 
             newWheel.transform.SetParent(refTransform.parent);
 
-            // Offset lateral conforme lado
-            float offsetX = (i == 0 || i == 2) ? offsetEsquerda : offsetDireita;
-            Vector3 offset = refTransform.TransformDirection(new Vector3(offsetX, 0f, 0f));
+            // Encontra posição do filho "RimBright"
+            Transform rimBright = refTransform.Find("RimBright");
+            Vector3 basePosition = (rimBright != null) ? rimBright.position : refTransform.position;
 
-            newWheel.transform.position = refTransform.position + offset;
+            newWheel.transform.position = basePosition;
             newWheel.transform.rotation = Quaternion.Euler(wheelRotations[i]);
             newWheel.transform.localScale = defaultWheelScale;
+
+            // Corrigir centro visual
+            Renderer refRenderer = refTransform.GetComponentInChildren<Renderer>();
+            Renderer newRenderer = newWheel.GetComponentInChildren<Renderer>();
+
+            if (refRenderer != null && newRenderer != null)
+            {
+                Vector3 centroOriginal = refRenderer.bounds.center;
+                Vector3 centroNovo = newRenderer.bounds.center;
+                Vector3 diferencaCentro = centroOriginal - centroNovo;
+                newWheel.transform.position += diferencaCentro;
+            }
+
+            // Aplicar offset lateral
+            float offsetX = (i == 0 || i == 2) ? offsetEsquerda : offsetDireita;
+            Vector3 offset = refTransform.right * offsetX;
+            newWheel.transform.position += offset;
 
             activeWheels[i] = newWheel;
         }
@@ -104,6 +126,10 @@ public class WheelSwitcher : MonoBehaviour
         return nomeJanteSelecionada;
     }
 }
+
+
+
+
 
 
 
