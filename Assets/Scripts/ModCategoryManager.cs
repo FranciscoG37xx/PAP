@@ -133,20 +133,28 @@ public class ModCategorySelector : MonoBehaviour
         bool isPintura = painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor");
 
         var colorGrid = FindObjectOfType<ColorGridGenerator>();
-       
-       if (colorGrid != null)
-{
-    if (isPintura)
-        colorGrid.AtivarColorGrid();
-    else
-        colorGrid.gameObject.SetActive(false);
-}
+
+        if (colorGrid != null)
+        {
+            if (isPintura)
+                colorGrid.AtivarColorGrid();
+            else
+                colorGrid.gameObject.SetActive(false);
+        }
         if (carro != null)
         {
             Vector3 destino = isPintura ? carroPosicaoOriginal + deslocamentoPintura : carroPosicaoOriginal;
             if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
             moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(destino, 0.6f));
         }
+        
+        if (painelSelecionado.name.ToLower().Contains("jantes"))
+       {
+        var grid = FindObjectOfType<JanteColorGridGenerator>();
+         if (grid != null)
+         grid.gameObject.SetActive(true);
+       }
+
     }
 
     public void FecharPainelDePintura()

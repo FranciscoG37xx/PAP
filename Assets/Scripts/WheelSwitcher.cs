@@ -17,6 +17,9 @@ public class WheelSwitcher : MonoBehaviour
     public float offsetEsquerda = -0.05f;
     public float offsetDireita = 0.05f;
 
+    [Header("Material da Jante")]
+    public Material materialJante;  // ← Atribuir no inspetor
+
     public void SwitchToNextWheels()
     {
         currentIndex = (currentIndex + 1) % wheelPrefabs.Length;
@@ -84,7 +87,6 @@ public class WheelSwitcher : MonoBehaviour
 
             newWheel.transform.SetParent(refTransform.parent);
 
-            // Encontra posição do filho "RimBright"
             Transform rimBright = refTransform.Find("RimBright");
             Vector3 basePosition = (rimBright != null) ? rimBright.position : refTransform.position;
 
@@ -109,6 +111,14 @@ public class WheelSwitcher : MonoBehaviour
             Vector3 offset = refTransform.right * offsetX;
             newWheel.transform.position += offset;
 
+            // ✅ Aplica o material às novas jantes
+            if (materialJante != null)
+            {
+                Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
+                foreach (Renderer rend in renderers)
+                    rend.material = materialJante;
+            }
+
             activeWheels[i] = newWheel;
         }
     }
@@ -126,6 +136,7 @@ public class WheelSwitcher : MonoBehaviour
         return nomeJanteSelecionada;
     }
 }
+
 
 
 
