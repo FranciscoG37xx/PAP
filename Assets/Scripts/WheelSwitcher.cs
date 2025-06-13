@@ -8,6 +8,7 @@ public class WheelSwitcher : MonoBehaviour
 
     private int currentIndex = 0;
     private string nomeJanteSelecionada = "";
+    public Color corJanteSelecionada = Color.white;
 
     [Header("Correção de Rodas")]
     public Vector3[] wheelRotations = new Vector3[4];
@@ -111,13 +112,21 @@ public class WheelSwitcher : MonoBehaviour
             Vector3 offset = refTransform.right * offsetX;
             newWheel.transform.position += offset;
 
-            // ✅ Aplica o material às novas jantes
-            if (materialJante != null)
-            {
-                Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers)
-                    rend.material = materialJante;
-            }
+            // ✅ Aplica o material E a cor selecionada às novas jantes
+if (materialJante != null)
+{
+    Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
+    foreach (Renderer rend in renderers)
+    {
+        rend.material = materialJante;
+
+        if (rend.material.HasProperty("_Color"))
+        {
+            rend.material.color = corJanteSelecionada;
+        }
+    }
+}
+
 
             activeWheels[i] = newWheel;
         }

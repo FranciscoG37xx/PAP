@@ -6,7 +6,7 @@ public class JanteColorGridGenerator : MonoBehaviour
     [Header("Grid Settings")]
     public GameObject colorButtonPrefab;
     public Transform gridParent;
-    public Material janteMaterialAlvo; // ← Material a aplicar nas jantes
+    public Material janteMaterialAlvo;
 
     [Header("Som opcional")]
     public AudioSource audioSource;
@@ -54,14 +54,43 @@ public class JanteColorGridGenerator : MonoBehaviour
     {
         Debug.Log("Cor de jante selecionada: " + selected);
 
+        // Atualiza o material original
         if (janteMaterialAlvo != null)
         {
             janteMaterialAlvo.color = selected;
         }
 
+        // Aplica a cor a todas as jantes visíveis (por nome)
+        foreach (var wheel in GameObject.FindObjectsOfType<Transform>())
+        {
+            if (!wheel.name.ToLower().Contains("rim")) continue;
+
+            Renderer renderer = wheel.GetComponent<Renderer>();
+            if (renderer == null) continue;
+
+            foreach (var mat in renderer.materials)
+            {
+                if (mat.HasProperty("_Color"))
+                    mat.color = selected;
+            }
+        }
+
+        // Guarda a cor para reutilizar nas próximas jantes
+        var switcher = FindObjectOfType<WheelSwitcher>();
+        if (switcher != null)
+        {
+            switcher.corJanteSelecionada = selected;
+        }
+
+        // Toca o som
         if (audioSource != null && somSelecao != null)
         {
+            if (!audioSource.gameObject.activeInHierarchy)
+                audioSource.gameObject.SetActive(true);
+
             audioSource.PlayOneShot(somSelecao);
         }
     }
 }
+
+
