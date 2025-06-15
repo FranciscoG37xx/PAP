@@ -1842,8 +1842,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 21, y: 17}
-  m_SizeDelta: {x: -956.963, y: 0}
+  m_AnchoredPosition: {x: -10, y: 40.5909}
+  m_SizeDelta: {x: -1100.56, y: -47.1819}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &521981143
 MonoBehaviour:
@@ -1928,7 +1928,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 150}
+  m_CellSize: {x: 115, y: 155}
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 1
   m_ConstraintCount: 7
@@ -2212,13 +2212,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 701109483}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1340931841}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -547, y: 108}
@@ -2300,7 +2300,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 69db995727621d94ea1f27f784e90583, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a7bc7c05be3fc4142b10b2a5e1a86107, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3495,8 +3495,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 170, y: -85}
-  m_SizeDelta: {x: 100, y: 150}
+  m_AnchoredPosition: {x: 192.5, y: -87.5}
+  m_SizeDelta: {x: 115, y: 155}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &1093183821
 AudioSource:
@@ -3891,7 +3891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.079197526, g: 1, b: 0, a: 0.8666667}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -6023,6 +6023,13 @@ MonoBehaviour:
   defaultWheelScale: {x: 1.5, y: 1.5, z: 1.5}
   offsetEsquerda: 0.09
   offsetDireita: -0.09
+  ajusteProfundidadePorJante:
+  - 0
+  - 0
+  - 0
+  - 0.04
+  - 0.04
+  - 0
   materialJante: {fileID: 2100000, guid: 36b3314e7f17ec649b83d3f9d2f5198b, type: 2}
 --- !u!1 &2073591174
 GameObject:
@@ -6705,11 +6712,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 115
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 155
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6741,11 +6748,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 60
+      value: 67.5
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -85
+      value: -87.5
       objectReference: {fileID: 0}
     - target: {fileID: 4062513231028581657, guid: 0d35efafd02481c4a858c1d3d3eadbd0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

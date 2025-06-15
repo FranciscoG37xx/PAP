@@ -18,8 +18,11 @@ public class WheelSwitcher : MonoBehaviour
     public float offsetEsquerda = -0.05f;
     public float offsetDireita = 0.05f;
 
+    [Header("Ajuste de profundidade por jante")]
+    public float[] ajusteProfundidadePorJante = new float[4];
+
     [Header("Material da Jante")]
-    public Material materialJante;  // ← Atribuir no inspetor
+    public Material materialJante;
 
     public void SwitchToNextWheels()
     {
@@ -107,26 +110,32 @@ public class WheelSwitcher : MonoBehaviour
                 newWheel.transform.position += diferencaCentro;
             }
 
-            // Aplicar offset lateral
+            // Offset lateral
             float offsetX = (i == 0 || i == 2) ? offsetEsquerda : offsetDireita;
             Vector3 offset = refTransform.right * offsetX;
+
+            // Offset de profundidade com correção de direção
+            if (ajusteProfundidadePorJante.Length == wheelPrefabs.Length)
+            {
+                float profundidade = ajusteProfundidadePorJante[index];
+                bool isEsquerda = (i == 0 || i == 2);
+                float profundidadeFinal = isEsquerda ? -profundidade : profundidade;
+                offset += refTransform.right * profundidadeFinal;
+            }
+
             newWheel.transform.position += offset;
 
-            // ✅ Aplica o material E a cor selecionada às novas jantes
-if (materialJante != null)
-{
-    Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
-    foreach (Renderer rend in renderers)
-    {
-        rend.material = materialJante;
-
-        if (rend.material.HasProperty("_Color"))
-        {
-            rend.material.color = corJanteSelecionada;
-        }
-    }
-}
-
+            // Aplica material e cor
+            if (materialJante != null)
+            {
+                Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
+                foreach (Renderer rend in renderers)
+                {
+                    rend.material = materialJante;
+                    if (rend.material.HasProperty("_Color"))
+                        rend.material.color = corJanteSelecionada;
+                }
+            }
 
             activeWheels[i] = newWheel;
         }
@@ -145,6 +154,8 @@ if (materialJante != null)
         return nomeJanteSelecionada;
     }
 }
+
+
 
 
 
