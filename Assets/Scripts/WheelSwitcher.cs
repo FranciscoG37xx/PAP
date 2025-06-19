@@ -153,6 +153,14 @@ public class WheelSwitcher : MonoBehaviour
     {
         return nomeJanteSelecionada;
     }
+
+    //Chamado ao trocar de carro para resetar o estado
+    public void ResetarEstado()
+    {
+        currentIndex = 0;
+        SwitchWheels(0);
+    }
+
 }
 
 

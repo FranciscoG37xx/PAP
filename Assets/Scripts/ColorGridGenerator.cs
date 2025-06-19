@@ -9,47 +9,48 @@ public class ColorGridGenerator : MonoBehaviour
     public Texture2D pointerCursor;
     public CursorMode cursorMode = CursorMode.Auto;
 
-    public Renderer carroRenderer; // Assign o Renderer do carro
-    public AudioSource audioSource; // O componente que vai tocar o som
-    public AudioClip pintarSom;    // O som a tocar quando escolhe uma cor
+    [Header("Referências")]
+    public Renderer carroRenderer; // Renderer atual do carro
+    public AudioSource audioSource;
+    public AudioClip pintarSom;
 
     public int columns = 10;
 
-    // Cada linha representa uma gama de cor: [claro, médio (principal), escuro]
+    private bool gridGerado = false;
+
+    // Gamas de cor
     private Color[][] colorRows = new Color[][]
     {
-        new Color[] { Color.white, new Color(0.7f, 0.7f, 0.7f), Color.black },                     // 1. Escala de cinzentos
-        new Color[] { new Color(1f, 0.9f, 0.8f), new Color(1f, 0.5f, 0f), new Color(0.4f, 0.2f, 0f) },   // 2. Laranja
-        new Color[] { new Color(1f, 1f, 0.8f), new Color(1f, 0.9f, 0.1f), new Color(0.4f, 0.3f, 0f) },   // 3. Amarelo
-        new Color[] { new Color(0.9f, 1f, 0.8f), new Color(0.6f, 0.8f, 0.1f), new Color(0.2f, 0.3f, 0f) }, // 4. Verde-limão
-        new Color[] { new Color(0.8f, 1f, 0.8f), new Color(0.2f, 0.7f, 0.2f), new Color(0f, 0.3f, 0f) },   // 5. Verde
-        new Color[] { new Color(0.8f, 1f, 1f), new Color(0.1f, 0.8f, 0.6f), new Color(0f, 0.3f, 0.2f) },   // 6. Verde-água
-        new Color[] { new Color(0.7f, 1f, 1f), new Color(0f, 0.6f, 0.8f), new Color(0f, 0.2f, 0.3f) },     // 7. Ciano
-        new Color[] { new Color(0.7f, 0.9f, 1f), new Color(0.1f, 0.4f, 1f), new Color(0f, 0f, 0.4f) },     // 8. Azul
-        new Color[] { new Color(0.8f, 0.8f, 1f), new Color(0.4f, 0.2f, 0.8f), new Color(0.2f, 0f, 0.4f) }, // 9. Azul-roxo
-        new Color[] { new Color(0.9f, 0.8f, 1f), new Color(0.7f, 0.3f, 1f), new Color(0.4f, 0f, 0.5f) },   // 10. Roxo
-        new Color[] { new Color(1f, 0.7f, 1f), new Color(0.8f, 0.1f, 0.5f), new Color(0.3f, 0f, 0.2f) },   // 11. Magenta
-        new Color[] { new Color(1f, 0.8f, 0.9f), new Color(1f, 0.4f, 0.6f), new Color(0.4f, 0f, 0.1f) },   // 12. Rosa
-        new Color[] { new Color(1f, 0.85f, 0.85f), new Color(0.9f, 0.2f, 0.2f), new Color(0.3f, 0f, 0f) }  // 13. Vermelho
+        new Color[] { Color.white, new Color(0.7f, 0.7f, 0.7f), Color.black },
+        new Color[] { new Color(1f, 0.9f, 0.8f), new Color(1f, 0.5f, 0f), new Color(0.4f, 0.2f, 0f) },
+        new Color[] { new Color(1f, 1f, 0.8f), new Color(1f, 0.9f, 0.1f), new Color(0.4f, 0.3f, 0f) },
+        new Color[] { new Color(0.9f, 1f, 0.8f), new Color(0.6f, 0.8f, 0.1f), new Color(0.2f, 0.3f, 0f) },
+        new Color[] { new Color(0.8f, 1f, 0.8f), new Color(0.2f, 0.7f, 0.2f), new Color(0f, 0.3f, 0f) },
+        new Color[] { new Color(0.8f, 1f, 1f), new Color(0.1f, 0.8f, 0.6f), new Color(0f, 0.3f, 0.2f) },
+        new Color[] { new Color(0.7f, 1f, 1f), new Color(0f, 0.6f, 0.8f), new Color(0f, 0.2f, 0.3f) },
+        new Color[] { new Color(0.7f, 0.9f, 1f), new Color(0.1f, 0.4f, 1f), new Color(0f, 0f, 0.4f) },
+        new Color[] { new Color(0.8f, 0.8f, 1f), new Color(0.4f, 0.2f, 0.8f), new Color(0.2f, 0f, 0.4f) },
+        new Color[] { new Color(0.9f, 0.8f, 1f), new Color(0.7f, 0.3f, 1f), new Color(0.4f, 0f, 0.5f) },
+        new Color[] { new Color(1f, 0.7f, 1f), new Color(0.8f, 0.1f, 0.5f), new Color(0.3f, 0f, 0.2f) },
+        new Color[] { new Color(1f, 0.8f, 0.9f), new Color(1f, 0.4f, 0.6f), new Color(0.4f, 0f, 0.1f) },
+        new Color[] { new Color(1f, 0.85f, 0.85f), new Color(0.9f, 0.2f, 0.2f), new Color(0.3f, 0f, 0f) }
     };
 
     void Start()
     {
-        
+        // Nada aqui — ativado manualmente
     }
 
-private bool gridGerado = false;
-
-public void AtivarColorGrid()
-{
-    if (!gridGerado)
+    public void AtivarColorGrid()
     {
-        GenerateColorGrid();
-        gridGerado = true;
-    }
+        if (!gridGerado)
+        {
+            GenerateColorGrid();
+            gridGerado = true;
+        }
 
-    gameObject.SetActive(true);
-}
+        gameObject.SetActive(true);
+    }
 
     public void GenerateColorGrid()
     {
@@ -65,12 +66,9 @@ public void AtivarColorGrid()
             for (int x = 0; x < columns; x++)
             {
                 float t = x / (float)(columns - 1);
-                Color color;
-
-                if (t < 0.5f)
-                    color = Color.Lerp(bright, baseColor, t * 2);
-                else
-                    color = Color.Lerp(baseColor, dark, (t - 0.5f) * 2);
+                Color color = (t < 0.5f) ?
+                    Color.Lerp(bright, baseColor, t * 2) :
+                    Color.Lerp(baseColor, dark, (t - 0.5f) * 2);
 
                 GameObject btn = Instantiate(colorButtonPrefab, gridParent);
                 Image img = btn.GetComponent<Image>();
@@ -98,10 +96,8 @@ public void AtivarColorGrid()
         {
             Material mat = carroRenderer.material;
             mat.color = selected;
-
-            // Aumenta o brilho/gloss e metalicidade
-            mat.SetFloat("_Metallic", 0.5f);    
-            mat.SetFloat("_Glossiness", 0.8f);  // Quanto mais alto, mais polido
+            mat.SetFloat("_Metallic", 0.5f);
+            mat.SetFloat("_Glossiness", 0.8f);
         }
 
         if (audioSource != null && pintarSom != null)
@@ -109,7 +105,14 @@ public void AtivarColorGrid()
             audioSource.PlayOneShot(pintarSom);
         }
     }
+
+    // ✅ Para trocar o carro dinamicamente
+    public void SetCarRenderer(Renderer novoRenderer)
+    {
+        carroRenderer = novoRenderer;
+    }
 }
+
 
 
 

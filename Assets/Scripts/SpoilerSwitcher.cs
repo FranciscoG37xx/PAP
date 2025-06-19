@@ -40,5 +40,19 @@ public class SpoilerSwitcher : MonoBehaviour
         if (activeSpoiler != null)
             Destroy(activeSpoiler);
     }
+
+    //Atualiza a âncora do spoiler ao trocar de carro
+    public void SetSpoilerAnchor(Transform novoAnchor)
+    {
+        spoilerAnchor = novoAnchor;
+    }
+
+    //Reset ao trocar de carro
+    public void ResetarEstado()
+    {
+        ClearSpoiler();
+        currentIndex = 0;
+    }
 }
+
 
