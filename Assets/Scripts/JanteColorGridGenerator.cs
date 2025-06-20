@@ -54,13 +54,11 @@ public class JanteColorGridGenerator : MonoBehaviour
     {
         Debug.Log("Cor de jante selecionada: " + selected);
 
-        // Atualiza o material original
         if (janteMaterialAlvo != null)
         {
             janteMaterialAlvo.color = selected;
         }
 
-        // Aplica a cor a todas as jantes visíveis (por nome)
         foreach (var wheel in GameObject.FindObjectsOfType<Transform>())
         {
             if (!wheel.name.ToLower().Contains("rim")) continue;
@@ -75,14 +73,12 @@ public class JanteColorGridGenerator : MonoBehaviour
             }
         }
 
-        // Guarda a cor para reutilizar nas próximas jantes
         var switcher = FindObjectOfType<WheelSwitcher>();
         if (switcher != null)
         {
             switcher.corJanteSelecionada = selected;
         }
 
-        // Toca o som
         if (audioSource != null && somSelecao != null)
         {
             if (!audioSource.gameObject.activeInHierarchy)
@@ -91,6 +87,13 @@ public class JanteColorGridGenerator : MonoBehaviour
             audioSource.PlayOneShot(somSelecao);
         }
     }
+
+    //Atualizar o material da jante após troca de carro
+    public void SetMaterialAlvo(Material novoMaterial)
+    {
+        janteMaterialAlvo = novoMaterial;
+    }
+
 }
 
 
