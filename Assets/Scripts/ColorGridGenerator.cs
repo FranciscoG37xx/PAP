@@ -106,7 +106,7 @@ public class ColorGridGenerator : MonoBehaviour
         }
     }
 
-    // ✅ Para trocar o carro dinamicamente
+    //Para trocar o carro dinamicamente
     public void SetCarRenderer(Renderer novoRenderer)
     {
         carroRenderer = novoRenderer;
