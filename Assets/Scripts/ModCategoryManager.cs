@@ -18,12 +18,26 @@ public class ModCategorySelector : MonoBehaviour
     private Vector3 carroPosicaoOriginal;
     [SerializeField] private Vector3 deslocamentoPintura = new Vector3(2f, 0f, 0f);
 
+    [Header("Câmara")]
+    public Transform cameraTransform;
+    public Transform janteFocusPoint;
+    public float cameraZoomSpeed = 3f;
+    public Vector3 cameraOffset = new Vector3(0f, 0.3f, -0.6f);
+
+    private Vector3 cameraPosOriginal;
+    private Quaternion cameraRotOriginal;
+
     void Start()
     {
         if (carro != null)
         {
             carroPosicaoOriginal = carro.transform.position;
-            Debug.Log("Posição original do carro: " + carroPosicaoOriginal);
+        }
+
+        if (cameraTransform != null)
+        {
+            cameraPosOriginal = cameraTransform.position;
+            cameraRotOriginal = cameraTransform.rotation;
         }
 
         HighlightSelected();
@@ -93,13 +107,11 @@ public class ModCategorySelector : MonoBehaviour
 
     void SelectCurrent()
     {
-        Debug.Log("Selecionaste com ENTER: " + categoryPanels[currentIndex].name);
         AbrirCategoria(currentIndex);
     }
 
     void OnPanelClicked(int index)
     {
-        Debug.Log("Selecionaste com CLIQUE: " + categoryPanels[index].name);
         currentIndex = index;
         HighlightSelected();
         AbrirCategoria(index);
@@ -116,8 +128,6 @@ public class ModCategorySelector : MonoBehaviour
         GameObject painelSelecionado = categoryPanels[index];
         GameObject painelOpcao = optionPanels[index];
 
-        Debug.Log("Abrindo categoria: " + painelSelecionado.name);
-
         if (panelMods != null)
             panelMods.SetActive(false);
 
@@ -130,49 +140,41 @@ public class ModCategorySelector : MonoBehaviour
         if (painelOpcao != null)
             painelOpcao.SetActive(true);
 
-        bool isPintura = painelSelecionado.name.ToLower().Contains("pintura") || painelSelecionado.name.ToLower().Contains("cor");
+        string nome = painelSelecionado.name.ToLower();
 
-        var colorGrid = FindObjectOfType<ColorGridGenerator>();
-
-        if (colorGrid != null)
+        if (nome.Contains("pintura"))
         {
-            if (isPintura)
+            var colorGrid = FindObjectOfType<ColorGridGenerator>();
+            if (colorGrid != null)
                 colorGrid.AtivarColorGrid();
-            else
-                colorGrid.gameObject.SetActive(false);
-        }
-        if (carro != null)
-        {
-            Vector3 destino = isPintura ? carroPosicaoOriginal + deslocamentoPintura : carroPosicaoOriginal;
-            if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
-            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(destino, 0.6f));
-        }
-        
-        if (painelSelecionado.name.ToLower().Contains("jantes"))
-       {
-        var grid = FindObjectOfType<JanteColorGridGenerator>();
-         if (grid != null)
-         grid.gameObject.SetActive(true);
-       }
 
+            if (carro != null)
+            {
+                if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+                moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
+            }
+        }
+        else if (nome.Contains("jantes"))
+        {
+            var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
+            if (janteGrid != null)
+                janteGrid.gameObject.SetActive(true);
+
+            if (cameraTransform != null && janteFocusPoint != null)
+            {
+                StopAllCoroutines();
+                StartCoroutine(FocarCameraNaJante(janteFocusPoint.position + cameraOffset));
+            }
+        }
+        else
+        {
+            ResetCameraPosition();
+        }
     }
 
     public void FecharPainelDePintura()
     {
-        GameObject painelPintura = null;
-        foreach (GameObject painel in optionPanels)
-        {
-            if (painel != null && painel.name.ToLower().Contains("pintura"))
-            {
-                painel.SetActive(false);
-                painelPintura = painel;
-                break;
-            }
-        }
-
-        if (panelMods != null)
-            panelMods.SetActive(true);
-
+        FecharPainelPorNome("pintura");
         var colorGrid = FindObjectOfType<ColorGridGenerator>();
         if (colorGrid != null)
             colorGrid.gameObject.SetActive(false);
@@ -181,6 +183,51 @@ public class ModCategorySelector : MonoBehaviour
         {
             if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
             moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal, 0.6f));
+        }
+    }
+
+    public void FecharPainelDeJantes()
+    {
+        FecharPainelPorNome("jantes");
+        var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
+        if (janteGrid != null)
+            janteGrid.gameObject.SetActive(false);
+        ResetCameraPosition();
+    }
+
+    public void FecharPainelDeSpoiler()
+    {
+        FecharPainelPorNome("spoiler");
+        ResetCameraPosition();
+    }
+
+    public void FecharPainelDeCapo()
+    {
+        FecharPainelPorNome("capo");
+        ResetCameraPosition();
+    }
+
+    void FecharPainelPorNome(string nome)
+    {
+        foreach (GameObject painel in optionPanels)
+        {
+            if (painel != null && painel.name.ToLower().Contains(nome.ToLower()))
+            {
+                painel.SetActive(false);
+                break;
+            }
+        }
+
+        if (panelMods != null)
+            panelMods.SetActive(true);
+    }
+
+    void ResetCameraPosition()
+    {
+        if (cameraTransform != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(MoverCameraSuavemente(cameraPosOriginal, cameraRotOriginal));
         }
     }
 
@@ -198,7 +245,50 @@ public class ModCategorySelector : MonoBehaviour
 
         carro.transform.position = destino;
     }
+
+    IEnumerator FocarCameraNaJante(Vector3 destino)
+    {
+        Vector3 origem = cameraTransform.position;
+        Quaternion rotOrigem = cameraTransform.rotation;
+
+        Quaternion rotFinal = Quaternion.LookRotation(janteFocusPoint.position - destino);
+
+        float duracao = 0.6f;
+        float tempo = 0f;
+
+        while (tempo < duracao)
+        {
+            cameraTransform.position = Vector3.Lerp(origem, destino, tempo / duracao);
+            cameraTransform.rotation = Quaternion.Slerp(rotOrigem, rotFinal, tempo / duracao);
+            tempo += Time.deltaTime;
+            yield return null;
+        }
+
+        cameraTransform.position = destino;
+        cameraTransform.rotation = rotFinal;
+    }
+
+    IEnumerator MoverCameraSuavemente(Vector3 destino, Quaternion rotFinal)
+    {
+        Vector3 origem = cameraTransform.position;
+        Quaternion rotOrigem = cameraTransform.rotation;
+
+        float duracao = 0.6f;
+        float tempo = 0f;
+
+        while (tempo < duracao)
+        {
+            cameraTransform.position = Vector3.Lerp(origem, destino, tempo / duracao);
+            cameraTransform.rotation = Quaternion.Slerp(rotOrigem, rotFinal, tempo / duracao);
+            tempo += Time.deltaTime;
+            yield return null;
+        }
+
+        cameraTransform.position = destino;
+        cameraTransform.rotation = rotFinal;
+    }
 }
+
 
 
 
