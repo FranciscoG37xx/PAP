@@ -37,6 +37,14 @@ public class ColorGridGenerator : MonoBehaviour
         new Color[] { new Color(1f, 0.85f, 0.85f), new Color(0.9f, 0.2f, 0.2f), new Color(0.3f, 0f, 0f) }
     };
 
+void Start()
+{
+    if (carroRenderer != null && CorPrimariaManager.Instance != null)
+    {
+        CorPrimariaManager.Instance.InicializarComCorRenderer(carroRenderer);
+    }
+}
+
     public void AtivarColorGrid()
     {
         if (!gridGerado)
@@ -84,26 +92,56 @@ public class ColorGridGenerator : MonoBehaviour
         }
     }
 
-    void OnColorSelected(Color selected)
+void OnColorSelected(Color selected)
+{
+    Debug.Log("Cor selecionada: " + selected);
+
+    // Pintar o carro
+    if (carroRenderer != null)
     {
-        Debug.Log("Cor selecionada: " + selected);
-
-        if (carroRenderer != null)
-        {
-            Material mat = carroRenderer.material;
-            Color corAnterior = mat.color;
-
-            mat.color = selected;
-            mat.SetFloat("_Metallic", 0.5f);
-            mat.SetFloat("_Glossiness", 0.8f);
-
-            AplicarCorAoSpoilerSeNecessario(corAnterior, selected);
-        }
-
-        if (audioSource != null && pintarSom != null)
-            audioSource.PlayOneShot(pintarSom);
-            
+        Material mat = carroRenderer.material;
+        mat.color = selected;
+        mat.SetFloat("_Metallic", 0.5f);
+        mat.SetFloat("_Glossiness", 0.8f);
     }
+
+    // Guardar a nova cor no manager
+    if (CorPrimariaManager.Instance != null)
+        CorPrimariaManager.Instance.corAtualDoCarro = selected;
+
+    // Pintar todos os spoilers (ativos e inativos)
+    GameObject[] todos = FindObjectsOfType<GameObject>(true);
+    foreach (GameObject obj in todos)
+    {
+        if (!obj.name.ToLower().Contains("spoiler")) continue;
+
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer rend in renderers)
+        {
+            foreach (var mat in rend.materials)
+            {
+                if (mat.HasProperty("_Color"))
+                    mat.color = selected;
+            }
+        }
+    }
+
+    // Atualiza a cor ativa do SpoilerColorToggle (se existir na cena)
+    var toggle = FindObjectOfType<SpoilerColorToggle>();
+    if (toggle != null)
+    {
+        toggle.SetUltimaCorUsada(selected);
+    }
+
+    // Som
+    if (audioSource != null && pintarSom != null)
+            if (!audioSource.gameObject.activeInHierarchy)
+                audioSource.gameObject.SetActive(true);
+            audioSource.PlayOneShot(pintarSom);
+}
+
+
+
 
     void AplicarCorAoSpoilerSeNecessario(Color corAnterior, Color novaCor)
     {
