@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class SpoilerSwitcher : MonoBehaviour
 {
-    public GameObject[] spoilerPrefabs;         // Prefabs disponíveis
-    public Transform spoilerAnchor;             // Onde os spoilers serão colocados
+    [Header("Configuração de Spoilers")]
+    public GameObject[] spoilerPrefabs;         // Prefabs disponíveis para troca
+    public GameObject originalSpoiler;          // Spoiler original do carro atual (serve de referência)
     private GameObject activeSpoiler;           // Spoiler atualmente ativo
 
     private int currentIndex = 0;
@@ -21,19 +22,49 @@ public class SpoilerSwitcher : MonoBehaviour
     }
 
     private void SwitchSpoiler(int index)
+{
+    if (spoilerPrefabs.Length == 0 || originalSpoiler == null)
     {
-        if (spoilerPrefabs.Length == 0 || spoilerAnchor == null)
-        {
-            Debug.LogWarning("Spoilers ou âncora não atribuídos.");
-            return;
-        }
-
-        if (activeSpoiler != null)
-            Destroy(activeSpoiler);
-
-        GameObject newSpoiler = Instantiate(spoilerPrefabs[index], spoilerAnchor.position, spoilerAnchor.rotation, spoilerAnchor);
-        activeSpoiler = newSpoiler;
+        Debug.LogWarning("Spoilers ou referência original não atribuídos.");
+        return;
     }
+
+    if (activeSpoiler != null)
+        Destroy(activeSpoiler);
+
+    // Instanciar na posição/rotação/escala do original
+    GameObject newSpoiler = Instantiate(spoilerPrefabs[index]);
+    
+    newSpoiler.transform.position = originalSpoiler.transform.position;
+    newSpoiler.transform.rotation = originalSpoiler.transform.rotation;
+    newSpoiler.transform.localScale = originalSpoiler.transform.localScale;
+
+    // Mesmo parent do spoiler original
+    newSpoiler.transform.SetParent(originalSpoiler.transform.parent);
+
+    activeSpoiler = newSpoiler;
+    FindObjectOfType<SpoilerColorToggle>()?.AplicarCorASpoilers();
+    // Debug
+    string nomeCarro = originalSpoiler.transform.root.name.ToLower();
+    Debug.Log("Nome do carro raiz: " + nomeCarro);
+    Debug.Log("Spoiler index: " + index);
+
+    // Ajustes personalizados
+    if (nomeCarro.Contains("audi_a7")) // substitui pelo nome real
+    {
+        if (index == 2)
+        {
+            Debug.Log("Aplicando ajuste para spoiler 1 (frente)");
+            newSpoiler.transform.localPosition += new Vector3(0f, 0f, -0.05f);
+        }
+        else if (index == 4)
+        {
+            Debug.Log("Aplicando ajuste para spoiler 2 (cima)");
+            newSpoiler.transform.localPosition += new Vector3(0f, 0.01f, 0.07f);
+        }
+    }
+}
+
 
     public void ClearSpoiler()
     {
@@ -41,18 +72,17 @@ public class SpoilerSwitcher : MonoBehaviour
             Destroy(activeSpoiler);
     }
 
-    //Atualiza a âncora do spoiler ao trocar de carro
-    public void SetSpoilerAnchor(Transform novoAnchor)
+    public void SetOriginalSpoiler(GameObject novoSpoiler)
     {
-        spoilerAnchor = novoAnchor;
+        originalSpoiler = novoSpoiler;
     }
 
-    //Reset ao trocar de carro
     public void ResetarEstado()
     {
         ClearSpoiler();
         currentIndex = 0;
     }
 }
+
 
 

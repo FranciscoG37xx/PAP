@@ -10,7 +10,7 @@ public class ColorGridGenerator : MonoBehaviour
     public CursorMode cursorMode = CursorMode.Auto;
 
     [Header("Referências")]
-    public Renderer carroRenderer; // Renderer atual do carro
+    public Renderer carroRenderer;
     public AudioSource audioSource;
     public AudioClip pintarSom;
 
@@ -18,7 +18,8 @@ public class ColorGridGenerator : MonoBehaviour
 
     private bool gridGerado = false;
 
-    // Gamas de cor
+    private Color corSecundaria = new Color(0.05f, 0.05f, 0.05f); // Cor escura padrão para o spoiler
+
     private Color[][] colorRows = new Color[][]
     {
         new Color[] { Color.white, new Color(0.7f, 0.7f, 0.7f), Color.black },
@@ -35,11 +36,6 @@ public class ColorGridGenerator : MonoBehaviour
         new Color[] { new Color(1f, 0.8f, 0.9f), new Color(1f, 0.4f, 0.6f), new Color(0.4f, 0f, 0.1f) },
         new Color[] { new Color(1f, 0.85f, 0.85f), new Color(0.9f, 0.2f, 0.2f), new Color(0.3f, 0f, 0f) }
     };
-
-    void Start()
-    {
-        // Nada aqui — ativado manualmente
-    }
 
     public void AtivarColorGrid()
     {
@@ -66,9 +62,9 @@ public class ColorGridGenerator : MonoBehaviour
             for (int x = 0; x < columns; x++)
             {
                 float t = x / (float)(columns - 1);
-                Color color = (t < 0.5f) ?
-                    Color.Lerp(bright, baseColor, t * 2) :
-                    Color.Lerp(baseColor, dark, (t - 0.5f) * 2);
+                Color color = (t < 0.5f)
+                    ? Color.Lerp(bright, baseColor, t * 2)
+                    : Color.Lerp(baseColor, dark, (t - 0.5f) * 2);
 
                 GameObject btn = Instantiate(colorButtonPrefab, gridParent);
                 Image img = btn.GetComponent<Image>();
@@ -95,23 +91,47 @@ public class ColorGridGenerator : MonoBehaviour
         if (carroRenderer != null)
         {
             Material mat = carroRenderer.material;
+            Color corAnterior = mat.color;
+
             mat.color = selected;
             mat.SetFloat("_Metallic", 0.5f);
             mat.SetFloat("_Glossiness", 0.8f);
+
+            AplicarCorAoSpoilerSeNecessario(corAnterior, selected);
         }
 
         if (audioSource != null && pintarSom != null)
-        {
             audioSource.PlayOneShot(pintarSom);
+            
+    }
+
+    void AplicarCorAoSpoilerSeNecessario(Color corAnterior, Color novaCor)
+    {
+        if (carroRenderer == null) return;
+
+        Transform carro = carroRenderer.transform.root;
+        Renderer[] renderers = carro.GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer r in renderers)
+        {
+            if (!r.name.ToLower().Contains("spoiler")) continue;
+
+            foreach (Material mat in r.materials)
+            {
+                if (mat.HasProperty("_Color") && mat.color != corSecundaria)
+                {
+                    mat.color = novaCor;
+                }
+            }
         }
     }
 
-    //Para trocar o carro dinamicamente
     public void SetCarRenderer(Renderer novoRenderer)
     {
         carroRenderer = novoRenderer;
     }
 }
+
 
 
 
