@@ -631,6 +631,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 128521842}
   m_CullTransparentMesh: 1
+--- !u!1 &157724100 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6213788033156240551, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &161505187
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,6 +2600,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 610354460}
   m_CullTransparentMesh: 1
+--- !u!1 &627874147 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 261999862010641398, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &658399916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2852,6 +2862,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 701109483}
   m_CullTransparentMesh: 1
+--- !u!1 &703816952 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3356516637909081091, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -6644,6 +6659,11 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6065846180074623041, guid: 8f811c71145d6cb4a84c2fd25635277e, type: 3}
   m_PrefabInstance: {fileID: 6578409169773637773}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1531858047 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4684848941170303921, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1552308619
 GameObject:
   m_ObjectHideFlags: 0
@@ -7673,9 +7693,11 @@ MonoBehaviour:
   - nome: Audi A7 SportBack 2020
     prefab: {fileID: 919132149155446097, guid: aec1068893bc51649aaa5f42a9ccee42, type: 3}
     precoBase: 75000
+    janteOriginalPrefab: {fileID: 2113738878}
   - nome: Porsche 911 GT3 2022
     prefab: {fileID: 7797341307450498202, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
     precoBase: 276500
+    janteOriginalPrefab: {fileID: 1531858047}
   spawnPoint: {fileID: 306987275}
   dropdown: {fileID: 1238715680}
   precoTexto: {fileID: 1409794455}
@@ -8895,11 +8917,16 @@ MonoBehaviour:
   - {fileID: 7242961845410058996, guid: 55faad3dc4e354d4daf879f0c3edfa93, type: 3}
   - {fileID: 4732190590827173313, guid: 23b0028df1cf58748a6ffa51c3a93d38, type: 3}
   - {fileID: 4454414539625084864, guid: bb988bbc43457bf4baa558048a719d37, type: 3}
-  currentWheels:
+  rodasAudi:
   - {fileID: 2113738877}
   - {fileID: 2113738878}
   - {fileID: 2113738875}
   - {fileID: 2113738876}
+  rodasPorsche:
+  - {fileID: 157724100}
+  - {fileID: 1531858047}
+  - {fileID: 627874147}
+  - {fileID: 703816952}
   corJanteSelecionada: {r: 1, g: 1, b: 1, a: 1}
   wheelRotations:
   - {x: 0, y: 90, z: 0}
@@ -9392,7 +9419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2545858562312867916, guid: 8f811c71145d6cb4a84c2fd25635277e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2891139931646446326, guid: 8f811c71145d6cb4a84c2fd25635277e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9440,7 +9467,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6151766419158126505, guid: 8f811c71145d6cb4a84c2fd25635277e, type: 3}
       propertyPath: m_Name
-      value: wheel.Bk.R.003_frontright_Jante
+      value: wheel.Bk.R.003_rearright_Jante
       objectReference: {fileID: 0}
     - target: {fileID: 6151766419158126505, guid: 8f811c71145d6cb4a84c2fd25635277e, type: 3}
       propertyPath: m_IsActive

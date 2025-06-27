@@ -60,18 +60,23 @@ public class JanteColorGridGenerator : MonoBehaviour
         }
 
         foreach (var wheel in GameObject.FindObjectsOfType<Transform>())
-        {
-            if (!wheel.name.ToLower().Contains("rim")) continue;
+{
+    string lowerName = wheel.name.ToLower();
 
-            Renderer renderer = wheel.GetComponent<Renderer>();
-            if (renderer == null) continue;
+    // Só pinta jantes (rim) e ignora partes como "rimdark_in"
+    if (!lowerName.Contains("rim") || lowerName.Contains("rimdark_in"))
+        continue;
 
-            foreach (var mat in renderer.materials)
-            {
-                if (mat.HasProperty("_Color"))
-                    mat.color = selected;
-            }
-        }
+    Renderer renderer = wheel.GetComponent<Renderer>();
+    if (renderer == null) continue;
+
+    foreach (var mat in renderer.materials)
+    {
+        if (mat.HasProperty("_Color"))
+            mat.color = selected;
+    }
+}
+
 
         var switcher = FindObjectOfType<WheelSwitcher>();
         if (switcher != null)

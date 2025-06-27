@@ -3,7 +3,12 @@ using UnityEngine;
 public class WheelSwitcher : MonoBehaviour
 {
     public GameObject[] wheelPrefabs;
-    public GameObject[] currentWheels;
+
+    [Header("Rodas de cada carro")]
+    [SerializeField] private GameObject[] rodasAudi = new GameObject[4];
+    [SerializeField] private GameObject[] rodasPorsche = new GameObject[4];
+
+    private GameObject[] currentWheels = new GameObject[4];
     private GameObject[] activeWheels = new GameObject[4];
 
     private int currentIndex = 0;
@@ -24,6 +29,20 @@ public class WheelSwitcher : MonoBehaviour
     [Header("Material da Jante")]
     public Material materialJante;
 
+    public void SetRodasDoCarro(int carroIndex)
+    {
+        switch (carroIndex)
+        {
+            case 0: currentWheels = rodasAudi; break;
+            case 1: currentWheels = rodasPorsche; break;
+            default:
+                Debug.LogWarning("Carro inválido ou rodas não definidas.");
+                return;
+        }
+
+        ResetarEstado();
+    }
+
     public void SwitchToNextWheels()
     {
         currentIndex = (currentIndex + 1) % wheelPrefabs.Length;
@@ -35,6 +54,8 @@ public class WheelSwitcher : MonoBehaviour
         currentIndex = (currentIndex - 1 + wheelPrefabs.Length) % wheelPrefabs.Length;
         SwitchWheels(currentIndex);
     }
+
+
 
     private void SwitchWheels(int index)
     {
@@ -53,9 +74,8 @@ public class WheelSwitcher : MonoBehaviour
 
                 currentWheels[i].SetActive(true);
 
-                for (int j = 0; j < currentWheels[i].transform.childCount; j++)
+                foreach (Transform child in currentWheels[i].transform)
                 {
-                    Transform child = currentWheels[i].transform.GetChild(j);
                     string nameLower = child.name.ToLower();
                     if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
                         child.gameObject.SetActive(true);
@@ -72,9 +92,8 @@ public class WheelSwitcher : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < currentWheels[i].transform.childCount; j++)
+            foreach (Transform child in currentWheels[i].transform)
             {
-                Transform child = currentWheels[i].transform.GetChild(j);
                 string nameLower = child.name.ToLower();
                 if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
                     child.gameObject.SetActive(false);
@@ -98,10 +117,8 @@ public class WheelSwitcher : MonoBehaviour
             newWheel.transform.rotation = Quaternion.Euler(wheelRotations[i]);
             newWheel.transform.localScale = defaultWheelScale;
 
-            // Corrigir centro visual
             Renderer refRenderer = refTransform.GetComponentInChildren<Renderer>();
             Renderer newRenderer = newWheel.GetComponentInChildren<Renderer>();
-
             if (refRenderer != null && newRenderer != null)
             {
                 Vector3 centroOriginal = refRenderer.bounds.center;
@@ -110,11 +127,9 @@ public class WheelSwitcher : MonoBehaviour
                 newWheel.transform.position += diferencaCentro;
             }
 
-            // Offset lateral
             float offsetX = (i == 0 || i == 2) ? offsetEsquerda : offsetDireita;
             Vector3 offset = refTransform.right * offsetX;
 
-            // Offset de profundidade com correção de direção
             if (ajusteProfundidadePorJante.Length == wheelPrefabs.Length)
             {
                 float profundidade = ajusteProfundidadePorJante[index];
@@ -125,7 +140,6 @@ public class WheelSwitcher : MonoBehaviour
 
             newWheel.transform.position += offset;
 
-            // Aplica material e cor
             if (materialJante != null)
             {
                 Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
@@ -141,31 +155,17 @@ public class WheelSwitcher : MonoBehaviour
         }
     }
 
-    public void SetCurrentWheels(GameObject[] newReferenceWheels)
-    {
-        if (newReferenceWheels.Length == 4)
-            currentWheels = newReferenceWheels;
-        else
-            Debug.LogWarning("São necessárias 4 rodas de referência.");
-    }
+    public string GetNomeJanteSelecionada() => nomeJanteSelecionada;
 
-    public string GetNomeJanteSelecionada()
-    {
-        return nomeJanteSelecionada;
-    }
-
-    //Chamado ao trocar de carro para resetar o estado
     public void ResetarEstado()
     {
         currentIndex = 0;
         SwitchWheels(0);
     }
-
-   
-
-
-
 }
+
+
+
 
 
 
