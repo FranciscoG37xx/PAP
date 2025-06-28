@@ -3,38 +3,52 @@ using UnityEngine;
 public class WheelSwitcher : MonoBehaviour
 {
     public GameObject[] wheelPrefabs;
-
-    [Header("Rodas de cada carro")]
     [SerializeField] private GameObject[] rodasAudi = new GameObject[4];
     [SerializeField] private GameObject[] rodasPorsche = new GameObject[4];
 
     private GameObject[] currentWheels = new GameObject[4];
     private GameObject[] activeWheels = new GameObject[4];
-
     private int currentIndex = 0;
     private string nomeJanteSelecionada = "";
     public Color corJanteSelecionada = Color.white;
-
-    [Header("Correção de Rodas")]
     public Vector3[] wheelRotations = new Vector3[4];
-    public Vector3 defaultWheelScale = Vector3.one;
-
-    [Header("Offset de Posição")]
+    public Vector3 escalaJanteAudi = Vector3.one;
+    public Vector3 escalaJantePorsche = Vector3.one;
+    private Vector3 escalaAtual = Vector3.one;
     public float offsetEsquerda = -0.05f;
     public float offsetDireita = 0.05f;
-
-    [Header("Ajuste de profundidade por jante")]
-    public float[] ajusteProfundidadePorJante = new float[4];
-
-    [Header("Material da Jante")]
+    public float[] ajusteProfundidadePorJanteAudi;
+    public float[] ajusteProfundidadePorJantePorsche;
+    private float[] profundidadesAtuais = null;
     public Material materialJante;
+
+    // Controle de preço por troca de jante
+    private bool precoAplicadoJante = false;
 
     public void SetRodasDoCarro(int carroIndex)
     {
         switch (carroIndex)
         {
-            case 0: currentWheels = rodasAudi; break;
-            case 1: currentWheels = rodasPorsche; break;
+            case 0:
+                currentWheels = rodasAudi;
+                escalaAtual = escalaJanteAudi;
+                profundidadesAtuais = ajusteProfundidadePorJanteAudi;
+                break;
+
+            case 1:
+                currentWheels = rodasPorsche;
+                escalaAtual = escalaJantePorsche;
+                profundidadesAtuais = ajusteProfundidadePorJantePorsche;
+
+                // Oculta jantes do Audi se ainda estiverem ativas
+                GameObject[] todos = GameObject.FindObjectsOfType<GameObject>();
+                foreach (GameObject obj in todos)
+                {
+                    if (obj.name.ToLower().Contains("_jante_rim"))
+                        obj.SetActive(false);
+                }
+                break;
+
             default:
                 Debug.LogWarning("Carro inválido ou rodas não definidas.");
                 return;
@@ -55,95 +69,110 @@ public class WheelSwitcher : MonoBehaviour
         SwitchWheels(currentIndex);
     }
 
-
-
     private void SwitchWheels(int index)
+{
+    if (wheelPrefabs.Length == 0 || currentWheels.Length != 4 || wheelRotations.Length != 4)
     {
-        if (wheelPrefabs.Length == 0 || currentWheels.Length != 4 || wheelRotations.Length != 4)
-        {
-            Debug.LogWarning("Configuração incorreta de rodas.");
-            return;
-        }
+        Debug.LogWarning("Configuração incorreta de rodas.");
+        return;
+    }
 
-        if (index == 0)
+    if (index == 0)
+    {
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
+            if (activeWheels[i] != null)
             {
-                if (activeWheels[i] != null)
-                    Destroy(activeWheels[i]);
-
-                currentWheels[i].SetActive(true);
-
-                foreach (Transform child in currentWheels[i].transform)
-                {
-                    string nameLower = child.name.ToLower();
-                    if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
-                        child.gameObject.SetActive(true);
-                }
+                Destroy(activeWheels[i]);
+                activeWheels[i] = null;
             }
 
-            nomeJanteSelecionada = "Original";
-            Debug.Log("Jante original restaurada.");
-            return;
+            if (currentWheels[i] != null)
+            {
+                if (currentWheels == rodasPorsche)
+                {
+                    // Para o Porsche, desativa o objeto pai (a roda inteira)
+                    currentWheels[i].SetActive(true);
+                }
+                else
+                {
+                    // Para o Audi, mantém o pai ativo e ativa todos os filhos (exceto brakedisc)
+                    currentWheels[i].SetActive(true);
+                    foreach (Transform child in currentWheels[i].transform)
+                    {
+                        if (!child.name.ToLower().Contains("brakedisc"))
+                            child.gameObject.SetActive(true);
+                    }
+                }
+            }
         }
 
+        nomeJanteSelecionada = "Original";
+        precoAplicadoJante = false;
+        Debug.Log("Jante original restaurada.");
+    }
+    else
+    {
         nomeJanteSelecionada = wheelPrefabs[index].name.Replace("(Clone)", "").Trim();
         Debug.Log("Jante selecionada: " + nomeJanteSelecionada);
 
         for (int i = 0; i < 4; i++)
         {
-            foreach (Transform child in currentWheels[i].transform)
+            if (currentWheels[i] != null)
             {
-                string nameLower = child.name.ToLower();
-                if (!nameLower.Contains("brakedisc") && !nameLower.Contains("rimdark_in"))
-                    child.gameObject.SetActive(false);
+                if (currentWheels == rodasPorsche)
+                {
+                    // Para Porsche, desativa o objeto pai inteiro
+                    currentWheels[i].SetActive(false);
+                }
+                else
+                {
+                    // Para Audi, desativa apenas os filhos (exceto brakedisc)
+                    foreach (Transform child in currentWheels[i].transform)
+                    {
+                        if (!child.name.ToLower().Contains("brakedisc"))
+                            child.gameObject.SetActive(false);
+                    }
+                }
             }
 
             if (activeWheels[i] != null)
+            {
                 Destroy(activeWheels[i]);
+                activeWheels[i] = null;
+            }
         }
+
+        float profundidade = (profundidadesAtuais != null && index < profundidadesAtuais.Length)
+                            ? profundidadesAtuais[index] : 0f;
 
         for (int i = 0; i < 4; i++)
         {
             GameObject newWheel = Instantiate(wheelPrefabs[index]);
-            Transform refTransform = currentWheels[i].transform;
+            Transform refT = currentWheels[i].transform;
 
-            newWheel.transform.SetParent(refTransform.parent);
+            newWheel.transform.SetParent(refT.parent);
 
-            Transform rimBright = refTransform.Find("RimBright");
-            Vector3 basePosition = (rimBright != null) ? rimBright.position : refTransform.position;
-
-            newWheel.transform.position = basePosition;
+            Transform rimBright = refT.Find("RimBright");
+            Vector3 basePos = rimBright != null ? rimBright.position : refT.position;
+            newWheel.transform.position = basePos;
             newWheel.transform.rotation = Quaternion.Euler(wheelRotations[i]);
-            newWheel.transform.localScale = defaultWheelScale;
+            newWheel.transform.localScale = escalaAtual;
 
-            Renderer refRenderer = refTransform.GetComponentInChildren<Renderer>();
-            Renderer newRenderer = newWheel.GetComponentInChildren<Renderer>();
-            if (refRenderer != null && newRenderer != null)
+            Renderer refR = refT.GetComponentInChildren<Renderer>();
+            Renderer newR = newWheel.GetComponentInChildren<Renderer>();
+            if (refR != null && newR != null)
             {
-                Vector3 centroOriginal = refRenderer.bounds.center;
-                Vector3 centroNovo = newRenderer.bounds.center;
-                Vector3 diferencaCentro = centroOriginal - centroNovo;
-                newWheel.transform.position += diferencaCentro;
+                newWheel.transform.position += refR.bounds.center - newR.bounds.center;
             }
 
-            float offsetX = (i == 0 || i == 2) ? offsetEsquerda : offsetDireita;
-            Vector3 offset = refTransform.right * offsetX;
-
-            if (ajusteProfundidadePorJante.Length == wheelPrefabs.Length)
-            {
-                float profundidade = ajusteProfundidadePorJante[index];
-                bool isEsquerda = (i == 0 || i == 2);
-                float profundidadeFinal = isEsquerda ? -profundidade : profundidade;
-                offset += refTransform.right * profundidadeFinal;
-            }
-
+            Vector3 offset = refT.right * ((i % 2 == 0) ? offsetEsquerda : offsetDireita);
+            offset += refT.right * ((i % 2 == 0) ? -profundidade : profundidade);
             newWheel.transform.position += offset;
 
             if (materialJante != null)
             {
-                Renderer[] renderers = newWheel.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers)
+                foreach (Renderer rend in newWheel.GetComponentsInChildren<Renderer>())
                 {
                     rend.material = materialJante;
                     if (rend.material.HasProperty("_Color"))
@@ -153,6 +182,23 @@ public class WheelSwitcher : MonoBehaviour
 
             activeWheels[i] = newWheel;
         }
+
+        AplicarPrecoJante();
+    }
+}
+
+
+    private void AplicarPrecoJante()
+    {
+        if (!precoAplicadoJante && currentIndex != 0)
+        {
+            FindObjectOfType<CarSelector>()?.AplicarCustoTrocaJantes();
+            precoAplicadoJante = true;
+        }
+        else if (currentIndex == 0)
+        {
+            precoAplicadoJante = false;
+        }
     }
 
     public string GetNomeJanteSelecionada() => nomeJanteSelecionada;
@@ -161,8 +207,16 @@ public class WheelSwitcher : MonoBehaviour
     {
         currentIndex = 0;
         SwitchWheels(0);
+        precoAplicadoJante = false;
     }
 }
+
+
+
+
+
+
+
 
 
 

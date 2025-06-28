@@ -100,34 +100,41 @@ void OnColorSelected(Color selected)
     if (carroRenderer != null)
     {
         Material mat = carroRenderer.material;
+        Color corAnterior = mat.color;
+
         mat.color = selected;
         mat.SetFloat("_Metallic", 0.5f);
         mat.SetFloat("_Glossiness", 0.8f);
-    }
 
-    // Guardar a nova cor no manager
-    if (CorPrimariaManager.Instance != null)
-        CorPrimariaManager.Instance.corAtualDoCarro = selected;
+        // Atualiza a cor no manager
+        if (CorPrimariaManager.Instance != null)
+            CorPrimariaManager.Instance.corAtualDoCarro = selected;
 
-    // Pintar todos os spoilers (ativos e inativos)
-    GameObject[] todos = FindObjectsOfType<GameObject>(true);
-    foreach (GameObject obj in todos)
-    {
-        if (!obj.name.ToLower().Contains("spoiler")) continue;
-
-        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
-        foreach (Renderer rend in renderers)
+        // Pintar todos os spoilers (ativos e inativos) que tenham a mesma cor anterior do carro
+        GameObject[] todos = FindObjectsOfType<GameObject>(true);
+        foreach (GameObject obj in todos)
         {
-            foreach (var mat in rend.materials)
+            if (!obj.name.ToLower().Contains("spoiler")) continue;
+
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer rend in renderers)
             {
-                if (mat.HasProperty("_Color"))
-                    mat.color = selected;
+                foreach (var matSpoiler in rend.materials)
+                {
+                    if (matSpoiler.HasProperty("_Color") && matSpoiler.color == corAnterior)
+                    {
+                        matSpoiler.color = selected;
+                    }
+                }
             }
         }
     }
+    
+    FindObjectOfType<CarSelector>()?.AplicarCustoPintura();
+
 
     // Atualiza a cor ativa do SpoilerColorToggle (se existir na cena)
-    var toggle = FindObjectOfType<SpoilerColorToggle>();
+        var toggle = FindObjectOfType<SpoilerColorToggle>();
     if (toggle != null)
     {
         toggle.SetUltimaCorUsada(selected);
@@ -135,10 +142,15 @@ void OnColorSelected(Color selected)
 
     // Som
     if (audioSource != null && pintarSom != null)
-            if (!audioSource.gameObject.activeInHierarchy)
-                audioSource.gameObject.SetActive(true);
+    {
+        if (!audioSource.enabled)
+            audioSource.enabled = true;
+
+        if (!audioSource.isPlaying)
             audioSource.PlayOneShot(pintarSom);
+    }
 }
+
 
 
 

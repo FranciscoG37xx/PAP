@@ -118,59 +118,61 @@ public class ModCategorySelector : MonoBehaviour
     }
 
     void AbrirCategoria(int index)
+    {
+        if (index < 0 || index >= categoryPanels.Length || index >= optionPanels.Length)
+        {
+            Debug.LogWarning("Índice inválido ao abrir categoria.");
+            return;
+        }
+
+        GameObject painelSelecionado = categoryPanels[index];
+        GameObject painelOpcao = optionPanels[index];
+
+        string nome = painelSelecionado.name.ToLower();
+
+        // Só desativa o painel de mods se não for a categoria de troca de carro
+        if (panelMods != null && !nome.Contains("carro"))
+            panelMods.SetActive(false);
+
+        foreach (GameObject option in optionPanels)
+        {
+            if (option != null)
+                option.SetActive(false);
+        }
+
+        if (painelOpcao != null)
+            painelOpcao.SetActive(true);
+
+        if (nome.Contains("pintura"))
+        {
+            var colorGrid = FindObjectOfType<ColorGridGenerator>();
+            if (colorGrid != null)
+                colorGrid.AtivarColorGrid();
+
+            if (carro != null)
+            {
+                if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+                moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
+            }
+        }
+        else if (nome.Contains("jantes"))
+        {
+            var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
+            if (janteGrid != null)
+                janteGrid.gameObject.SetActive(true);
+
+            if (cameraTransform != null && janteFocusPoint != null)
+            {
+                StopAllCoroutines();
+                StartCoroutine(FocarCameraNaJante(janteFocusPoint.position + cameraOffset));
+            }
+        }
+    
+else
 {
-    if (index < 0 || index >= categoryPanels.Length || index >= optionPanels.Length)
-    {
-        Debug.LogWarning("Índice inválido ao abrir categoria.");
-        return;
-    }
+    ResetCameraPosition();
+}
 
-    GameObject painelSelecionado = categoryPanels[index];
-    GameObject painelOpcao = optionPanels[index];
-
-    string nome = painelSelecionado.name.ToLower();
-
-    // Só desativa o painel de mods se não for a categoria de troca de carro
-    if (panelMods != null && !nome.Contains("carro"))
-        panelMods.SetActive(false);
-
-    foreach (GameObject option in optionPanels)
-    {
-        if (option != null)
-            option.SetActive(false);
-    }
-
-    if (painelOpcao != null)
-        painelOpcao.SetActive(true);
-
-    if (nome.Contains("pintura"))
-    {
-        var colorGrid = FindObjectOfType<ColorGridGenerator>();
-        if (colorGrid != null)
-            colorGrid.AtivarColorGrid();
-
-        if (carro != null)
-        {
-            if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
-            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
-        }
-    }
-    else if (nome.Contains("jantes"))
-    {
-        var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
-        if (janteGrid != null)
-            janteGrid.gameObject.SetActive(true);
-
-        if (cameraTransform != null && janteFocusPoint != null)
-        {
-            StopAllCoroutines();
-            StartCoroutine(FocarCameraNaJante(janteFocusPoint.position + cameraOffset));
-        }
-    }
-    else
-    {
-        ResetCameraPosition();
-    }
 }
 
 

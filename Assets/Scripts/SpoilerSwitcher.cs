@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class SpoilerSwitcher : MonoBehaviour
 {
-    [Header("Configuração de Spoilers")]
     public GameObject[] spoilerPrefabs;
     public GameObject originalSpoiler;
     private GameObject activeSpoiler;
     private int currentIndex = 0;
+    private bool precoAplicadoSpoiler = false;
 
     public void SwitchToNextSpoiler()
     {
@@ -28,62 +28,70 @@ public class SpoilerSwitcher : MonoBehaviour
             return;
         }
 
+        bool usarSec = true;
         if (activeSpoiler != null)
-            Destroy(activeSpoiler);
+        {
+            foreach (Renderer rend in activeSpoiler.GetComponentsInChildren<Renderer>(true))
+                foreach (var mat in rend.materials)
+                    if (mat.HasProperty("_Color") && mat.color != new Color(0.05f, 0.05f, 0.05f))
+                        usarSec = false;
+        }
 
-        GameObject newSpoiler = Instantiate(spoilerPrefabs[index]);
-        newSpoiler.transform.position = originalSpoiler.transform.position;
-        newSpoiler.transform.rotation = originalSpoiler.transform.rotation;
-        newSpoiler.transform.localScale = originalSpoiler.transform.localScale;
-        newSpoiler.transform.SetParent(originalSpoiler.transform.parent);
+        if (activeSpoiler != null) Destroy(activeSpoiler);
+
+        GameObject newSpoiler = Instantiate(spoilerPrefabs[index],
+            originalSpoiler.transform.position,
+            originalSpoiler.transform.rotation,
+            originalSpoiler.transform.parent);
 
         activeSpoiler = newSpoiler;
 
-        // Ajustes personalizados por carro
-        string nomeCarro = originalSpoiler.transform.root.name.ToLower();
-        if (nomeCarro.Contains("audi_a7"))
+        if (!usarSec)
         {
-            if (index == 2)
-                newSpoiler.transform.localPosition += new Vector3(0f, 0f, -0.05f);
-            else if (index == 4)
-                newSpoiler.transform.localPosition += new Vector3(0f, 0.01f, 0.07f);
-        }
-
-        // Aplica a cor atual ao novo spoiler
-        if (CorPrimariaManager.Instance != null)
-        {
-            Color cor = CorPrimariaManager.Instance.corAtualDoCarro;
-
-            Renderer[] renderers = newSpoiler.GetComponentsInChildren<Renderer>();
-            foreach (Renderer rend in renderers)
+            foreach (Renderer rend in newSpoiler.GetComponentsInChildren<Renderer>(true))
             {
                 foreach (var mat in rend.materials)
                 {
                     if (mat.HasProperty("_Color"))
-                        mat.color = cor;
+                        mat.color = CorPrimariaManager.Instance?.corAtualDoCarro ?? Color.white;
+                    if (mat.HasProperty("_Metallic"))
+                        mat.SetFloat("_Metallic", 0.5f);
+                    if (mat.HasProperty("_Glossiness"))
+                        mat.SetFloat("_Glossiness", 0.8f);
                 }
             }
         }
 
-        // Aplica cor a todos os spoilers
         FindObjectOfType<SpoilerColorToggle>()?.AplicarCorASpoilers();
+
+        AplicarPrecoSpoiler();
+    }
+
+    private void AplicarPrecoSpoiler()
+    {
+        if (!precoAplicadoSpoiler && currentIndex != 0)
+        {
+            FindObjectOfType<CarSelector>()?.AplicarCustoSpoiler();
+            precoAplicadoSpoiler = true;
+        }
+        else if (currentIndex == 0) precoAplicadoSpoiler = false;
     }
 
     public void ClearSpoiler()
     {
-        if (activeSpoiler != null)
-            Destroy(activeSpoiler);
+        if (activeSpoiler != null) Destroy(activeSpoiler);
     }
 
-    public void SetOriginalSpoiler(GameObject novoSpoiler)
+    public void SetOriginalSpoiler(GameObject novo)
     {
-        originalSpoiler = novoSpoiler;
+        originalSpoiler = novo;
     }
 
     public void ResetarEstado()
     {
         ClearSpoiler();
         currentIndex = 0;
+        precoAplicadoSpoiler = false;
     }
 }
 
