@@ -70,122 +70,133 @@ public class WheelSwitcher : MonoBehaviour
     }
 
     private void SwitchWheels(int index)
-{
-    if (wheelPrefabs.Length == 0 || currentWheels.Length != 4 || wheelRotations.Length != 4)
     {
-        Debug.LogWarning("Configuração incorreta de rodas.");
-        return;
-    }
-
-    if (index == 0)
-    {
-        for (int i = 0; i < 4; i++)
+        if (wheelPrefabs.Length == 0 || currentWheels.Length != 4 || wheelRotations.Length != 4)
         {
-            if (activeWheels[i] != null)
-            {
-                Destroy(activeWheels[i]);
-                activeWheels[i] = null;
-            }
-
-            if (currentWheels[i] != null)
-            {
-                if (currentWheels == rodasPorsche)
-                {
-                    // Para o Porsche, desativa o objeto pai (a roda inteira)
-                    currentWheels[i].SetActive(true);
-                }
-                else
-                {
-                    // Para o Audi, mantém o pai ativo e ativa todos os filhos (exceto brakedisc)
-                    currentWheels[i].SetActive(true);
-                    foreach (Transform child in currentWheels[i].transform)
-                    {
-                        if (!child.name.ToLower().Contains("brakedisc"))
-                            child.gameObject.SetActive(true);
-                    }
-                }
-            }
+            Debug.LogWarning("Configuração incorreta de rodas.");
+            return;
         }
 
-        nomeJanteSelecionada = "Original";
-        precoAplicadoJante = false;
-        Debug.Log("Jante original restaurada.");
-    }
-    else
-    {
-        nomeJanteSelecionada = wheelPrefabs[index].name.Replace("(Clone)", "").Trim();
-        Debug.Log("Jante selecionada: " + nomeJanteSelecionada);
-
-        for (int i = 0; i < 4; i++)
+        if (index == 0)
         {
-            if (currentWheels[i] != null)
+            for (int i = 0; i < 4; i++)
             {
-                if (currentWheels == rodasPorsche)
+                if (activeWheels[i] != null)
                 {
-                    // Para Porsche, desativa o objeto pai inteiro
-                    currentWheels[i].SetActive(false);
+                    Destroy(activeWheels[i]);
+                    activeWheels[i] = null;
                 }
-                else
+
+                if (currentWheels[i] != null)
                 {
-                    // Para Audi, desativa apenas os filhos (exceto brakedisc)
-                    foreach (Transform child in currentWheels[i].transform)
+                    if (currentWheels == rodasPorsche)
                     {
-                        if (!child.name.ToLower().Contains("brakedisc"))
-                            child.gameObject.SetActive(false);
+                        // Para o Porsche, desativa o objeto pai (a roda inteira)
+                        currentWheels[i].SetActive(true);
+                    }
+                    else
+                    {
+                        // Para o Audi, mantém o pai ativo e ativa todos os filhos (exceto brakedisc)
+                        currentWheels[i].SetActive(true);
+                        foreach (Transform child in currentWheels[i].transform)
+                        {
+                            if (!child.name.ToLower().Contains("brakedisc"))
+                                child.gameObject.SetActive(true);
+                        }
                     }
                 }
             }
 
-            if (activeWheels[i] != null)
-            {
-                Destroy(activeWheels[i]);
-                activeWheels[i] = null;
-            }
+            nomeJanteSelecionada = "Original";
+            precoAplicadoJante = false;
+            Debug.Log("Jante original restaurada.");
         }
-
-        float profundidade = (profundidadesAtuais != null && index < profundidadesAtuais.Length)
-                            ? profundidadesAtuais[index] : 0f;
-
-        for (int i = 0; i < 4; i++)
+        else
         {
-            GameObject newWheel = Instantiate(wheelPrefabs[index]);
-            Transform refT = currentWheels[i].transform;
+            nomeJanteSelecionada = wheelPrefabs[index].name.Replace("(Clone)", "").Trim();
+            Debug.Log("Jante selecionada: " + nomeJanteSelecionada);
 
-            newWheel.transform.SetParent(refT.parent);
-
-            Transform rimBright = refT.Find("RimBright");
-            Vector3 basePos = rimBright != null ? rimBright.position : refT.position;
-            newWheel.transform.position = basePos;
-            newWheel.transform.rotation = Quaternion.Euler(wheelRotations[i]);
-            newWheel.transform.localScale = escalaAtual;
-
-            Renderer refR = refT.GetComponentInChildren<Renderer>();
-            Renderer newR = newWheel.GetComponentInChildren<Renderer>();
-            if (refR != null && newR != null)
+            for (int i = 0; i < 4; i++)
             {
-                newWheel.transform.position += refR.bounds.center - newR.bounds.center;
-            }
-
-            Vector3 offset = refT.right * ((i % 2 == 0) ? offsetEsquerda : offsetDireita);
-            offset += refT.right * ((i % 2 == 0) ? -profundidade : profundidade);
-            newWheel.transform.position += offset;
-
-            if (materialJante != null)
-            {
-                foreach (Renderer rend in newWheel.GetComponentsInChildren<Renderer>())
+                if (currentWheels[i] != null)
                 {
-                    rend.material = materialJante;
-                    if (rend.material.HasProperty("_Color"))
-                        rend.material.color = corJanteSelecionada;
+                    if (currentWheels == rodasPorsche)
+                    {
+                        // Para Porsche, desativa o objeto pai inteiro
+                        currentWheels[i].SetActive(false);
+                    }
+                    else
+                    {
+                        // Para Audi, desativa apenas os filhos (exceto brakedisc)
+                        foreach (Transform child in currentWheels[i].transform)
+                        {
+                            if (!child.name.ToLower().Contains("brakedisc"))
+                                child.gameObject.SetActive(false);
+                        }
+                    }
+                }
+
+                if (activeWheels[i] != null)
+                {
+                    Destroy(activeWheels[i]);
+                    activeWheels[i] = null;
                 }
             }
 
-            activeWheels[i] = newWheel;
+            float profundidade = (profundidadesAtuais != null && index < profundidadesAtuais.Length)
+                                ? profundidadesAtuais[index] : 0f;
+
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject newWheel = Instantiate(wheelPrefabs[index]);
+
+                //Duplicar materiais para evitar herança de cor
+                foreach (Renderer rend in newWheel.GetComponentsInChildren<Renderer>(true))
+                {
+                    Material[] mats = rend.materials;
+                    for (int j = 0; j < mats.Length; j++)
+                        mats[j] = new Material(mats[j]);
+                    rend.materials = mats;
+                }
+
+                Transform refT = currentWheels[i].transform;
+
+                newWheel.transform.SetParent(refT.parent);
+
+                Transform rimBright = refT.Find("RimBright");
+                Vector3 basePos = rimBright != null ? rimBright.position : refT.position;
+                newWheel.transform.position = basePos;
+                newWheel.transform.rotation = Quaternion.Euler(wheelRotations[i]);
+                newWheel.transform.localScale = escalaAtual;
+
+                Renderer refR = refT.GetComponentInChildren<Renderer>();
+                Renderer newR = newWheel.GetComponentInChildren<Renderer>();
+                if (refR != null && newR != null)
+                {
+                    newWheel.transform.position += refR.bounds.center - newR.bounds.center;
+                }
+
+                Vector3 offset = refT.right * ((i % 2 == 0) ? offsetEsquerda : offsetDireita);
+                offset += refT.right * ((i % 2 == 0) ? -profundidade : profundidade);
+                newWheel.transform.position += offset;
+
+                if (materialJante != null)
+                {
+                    foreach (Renderer rend in newWheel.GetComponentsInChildren<Renderer>())
+                    {
+                        rend.material = materialJante;
+                        if (rend.material.HasProperty("_Color"))
+                            rend.material.color = corJanteSelecionada;
+                    }
+                }
+
+                activeWheels[i] = newWheel;
+            }
+
+            AplicarPrecoJante();
         }
 
-        AplicarPrecoJante();
     }
-}
 
 
     private void AplicarPrecoJante()
@@ -209,6 +220,28 @@ public class WheelSwitcher : MonoBehaviour
         SwitchWheels(0);
         precoAplicadoJante = false;
     }
+    
+    public void ResetarCorDasJantes(Color cor)
+{
+    foreach (GameObject roda in currentWheels)
+    {
+        if (roda == null) continue;
+
+        Renderer[] renderers = roda.GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer rend in renderers)
+        {
+            if (!rend.name.ToLower().Contains("rim")) continue;
+
+            foreach (Material mat in rend.materials)
+            {
+                if (mat.HasProperty("_Color"))
+                    mat.color = cor;
+            }
+        }
+    }
+}
+
+
 }
 
 

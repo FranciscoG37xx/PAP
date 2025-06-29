@@ -2514,6 +2514,16 @@ MonoBehaviour:
   pointerCursor: {fileID: 0}
   cursorMode: 0
   carroRenderer: {fileID: 594346723}
+  porscheRenderers:
+  - {fileID: 1452600951}
+  - {fileID: 1452600950}
+  - {fileID: 1452600949}
+  - {fileID: 1452600948}
+  - {fileID: 1452600947}
+  - {fileID: 1452600946}
+  - {fileID: 1452600945}
+  - {fileID: 1452600944}
+  - {fileID: 1924494715}
   audioSource: {fileID: 1827834164}
   pintarSom: {fileID: 8300000, guid: 6ce739081f4a98d4e8b2d2ff56c8fdd4, type: 3}
   columns: 10
@@ -3182,6 +3192,8 @@ MonoBehaviour:
   - {fileID: 1672334229009021109, guid: 07f7c4c79eef60142a2beb7fab1d9b6c, type: 3}
   - {fileID: 8966123985246884297, guid: 76b155640db5ed0408922e343d491c67, type: 3}
   originalSpoiler: {fileID: 1736210387}
+  posicaoCorrecao: {x: 0, y: 0, z: 0}
+  rotacaoCorrecao: {x: 0, y: 0, z: 0}
 --- !u!1 &757768575
 GameObject:
   m_ObjectHideFlags: 0
@@ -3793,7 +3805,6 @@ MonoBehaviour:
   leftArrow: {fileID: 0}
   rightArrow: {fileID: 0}
   panelMods: {fileID: 0}
-  carro: {fileID: 0}
   deslocamentoPintura: {x: 2, y: 0, z: 0}
   cameraTransform: {fileID: 0}
   janteFocusPoint: {fileID: 0}
@@ -5989,6 +6000,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: f4b450c8fb45c7d4ca7d426d3bf6d070, type: 2}
+    - target: {fileID: 1133986815530987651, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+      propertyPath: m_Name
+      value: Lataria -Mala.001 (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 1215736397663190961, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -6028,6 +6043,10 @@ PrefabInstance:
     - target: {fileID: 2443921950534565149, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2575360926068893687, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -11.429
       objectReference: {fileID: 0}
     - target: {fileID: 2891986159915558774, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
       propertyPath: m_Name
@@ -6088,6 +6107,10 @@ PrefabInstance:
     - target: {fileID: 4082618447227441294, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570687641159052644, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+      propertyPath: m_Name
+      value: Lataria -Mala (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4684848941170303921, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
       propertyPath: m_Name
@@ -6263,8 +6286,51 @@ PrefabInstance:
     - {fileID: 2070138912598649077, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
     - {fileID: 2175434479916487820, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1525821316777926574, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1924494715}
   m_SourcePrefab: {fileID: 100100000, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+--- !u!23 &1452600944 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3101503624090311641, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600945 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6335252139706462884, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600946 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1069991899612069653, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600947 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9137305971063969849, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600948 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2863951143106610989, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600949 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4613304350865518232, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600950 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5890966328723078639, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1452600951 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8416572848447697488, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1460365062
 GameObject:
   m_ObjectHideFlags: 0
@@ -7740,7 +7806,7 @@ Transform:
   m_GameObject: {fileID: 1736210387}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.052, y: 1.0009999, z: 2.63}
+  m_LocalPosition: {x: 0.052, y: 1.0009999, z: 2.596}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8066,16 +8132,21 @@ MonoBehaviour:
     cenaInstance: {fileID: 909755825}
     precoBase: 75000
     janteOriginalPrefab: {fileID: 328319458}
-    spawnPoint: {fileID: 1758987832}
+    spoilerOriginalPrefab: {fileID: 1736210387}
+    correcaoSpoilerPosicao: {x: 0, y: 0, z: 0}
+    correcaoSpoilerRotacao: {x: 0, y: 0, z: 0}
+    materialCorOriginal: {fileID: 2100000, guid: bc9588be321e9364db704e2a6052251b, type: 2}
   - nome: Porsche 911 GT3 2022
     cenaInstance: {fileID: 695569261}
     precoBase: 276500
     janteOriginalPrefab: {fileID: 1531858047}
-    spawnPoint: {fileID: 110999982}
+    spoilerOriginalPrefab: {fileID: 1963337802}
+    correcaoSpoilerPosicao: {x: 0, y: -0.256, z: 0}
+    correcaoSpoilerRotacao: {x: 90, y: 0, z: 0}
+    materialCorOriginal: {fileID: 2100000, guid: aef6ccd58a2fa3842bdc54fdd82f117f, type: 2}
   dropdown: {fileID: 1238715680}
   precoTexto: {fileID: 1409794455}
-  prefabAudiOriginal: {fileID: 909755825}
-  prefabPorscheOriginal: {fileID: 695569261}
+  carroAtual: {fileID: 0}
 --- !u!4 &1861704340
 Transform:
   m_ObjectHideFlags: 0
@@ -8345,6 +8416,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908709657}
   m_CullTransparentMesh: 1
+--- !u!1 &1924494713 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1525821316777926574, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1924494715
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924494713}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: aef6ccd58a2fa3842bdc54fdd82f117f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1927058173
 GameObject:
   m_ObjectHideFlags: 0
@@ -8753,6 +8871,11 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1963337802 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6137231274380882470, guid: 2926bc3ea54e9464fb97d17bf68fb17e, type: 3}
+  m_PrefabInstance: {fileID: 1452600943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1986320268
 GameObject:
   m_ObjectHideFlags: 0
@@ -8810,7 +8933,6 @@ MonoBehaviour:
   leftArrow: {fileID: 658399918}
   rightArrow: {fileID: 1908709659}
   panelMods: {fileID: 819172554}
-  carro: {fileID: 909755825}
   deslocamentoPintura: {x: 0.3, y: 0, z: 1.1}
   cameraTransform: {fileID: 0}
   janteFocusPoint: {fileID: 0}

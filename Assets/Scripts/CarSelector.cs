@@ -7,9 +7,13 @@ public class CarSelector : MonoBehaviour
     public class CarOption
     {
         public string nome;
-        public GameObject cenaInstance;       // Objeto já presente na cena
+        public GameObject cenaInstance;
         public float precoBase;
         public GameObject janteOriginalPrefab;
+        public GameObject spoilerOriginalPrefab;
+        public Vector3 correcaoSpoilerPosicao = Vector3.zero;
+        public Vector3 correcaoSpoilerRotacao = Vector3.zero;
+        public Material materialCorOriginal;
     }
 
     [Header("Referências")]
@@ -17,11 +21,11 @@ public class CarSelector : MonoBehaviour
     public TMP_Dropdown dropdown;
     public TextMeshProUGUI precoTexto;
 
-    private GameObject carroAtual;
+    public GameObject carroAtual;
     private float precoAtual;
     private int indexAtual = -1;
 
-    // Flags de modificações aplicadas
+    // Flags
     private bool pinturaAplicada = false;
     private bool jantesTrocaAplicada = false;
     private bool pinturaJantesAplicada = false;
@@ -43,7 +47,6 @@ public class CarSelector : MonoBehaviour
 
         dropdown.onValueChanged.AddListener(OnCarroSelecionado);
 
-        // Desativa todos os carros no início
         foreach (var c in carrosDisponiveis)
             if (c.cenaInstance != null)
                 c.cenaInstance.SetActive(false);
@@ -55,7 +58,6 @@ public class CarSelector : MonoBehaviour
 
     void OnCarroSelecionado(int index)
     {
-        // Desativar carro atual
         if (carroAtual != null)
             carroAtual.SetActive(false);
 
@@ -80,6 +82,7 @@ public class CarSelector : MonoBehaviour
 
         ResetarModificacoes();
         ConfigurarSistemasDoCarro(carroAtual, indexAtual);
+        ResetarModificacoes();
     }
 
     void ResetarModificacoes()
@@ -105,9 +108,29 @@ public class CarSelector : MonoBehaviour
         if (body != null)
         {
             var renderer = body.GetComponent<Renderer>();
+
+            // ⬇️ Inicializa o CorPrimariaManager com o renderer do carro atual
+            if (CorPrimariaManager.Instance != null)
+                CorPrimariaManager.Instance.InicializarComCorRenderer(renderer);
+
             var colorGrid = FindObjectOfType<ColorGridGenerator>();
             if (colorGrid != null)
                 colorGrid.SetCarRenderer(renderer);
+
+                // Atualiza o CorPrimariaManager com a nova cor inicial do carro
+CorPrimariaManager.Instance.InicializarComCorRenderer(renderer);
+
+// Aplica a cor atual aos spoilers do carro (se houverem)
+var spoilers = carro.GetComponentsInChildren<Renderer>(includeInactive: true);
+foreach (var r in spoilers)
+{
+    if (r.gameObject.name.ToLower().Contains("spoiler"))
+    {
+        if (r.material.HasProperty("_Color"))
+            r.material.color = CorPrimariaManager.Instance.corAtualDoCarro;
+    }
+}
+
 
             var spoilerColorToggle = FindObjectOfType<SpoilerColorToggle>();
             if (spoilerColorToggle != null)
@@ -121,16 +144,18 @@ public class CarSelector : MonoBehaviour
         if (spoilerSwitcher != null)
         {
             Transform anchor = carro.transform.Find("SpoilerAnchor") ?? carro.transform.Find("Spoiler");
-            if (anchor != null)
+            if (carroIndex < carrosDisponiveis.Length && carrosDisponiveis[carroIndex].spoilerOriginalPrefab != null)
+                spoilerSwitcher.SetOriginalSpoiler(carrosDisponiveis[carroIndex].spoilerOriginalPrefab);
+            else if (anchor != null)
                 spoilerSwitcher.SetOriginalSpoiler(anchor.gameObject);
 
-            spoilerSwitcher.ResetarEstado();
+            spoilerSwitcher.posicaoCorrecao = carrosDisponiveis[carroIndex].correcaoSpoilerPosicao;
+            spoilerSwitcher.rotacaoCorrecao = carrosDisponiveis[carroIndex].correcaoSpoilerRotacao;
         }
 
         var janteManager = FindObjectOfType<WheelSwitcher>();
         if (janteManager != null)
         {
-            // Atribuir jante original no índice 0
             if (carroIndex < carrosDisponiveis.Length && carrosDisponiveis[carroIndex].janteOriginalPrefab != null)
                 janteManager.wheelPrefabs[0] = carrosDisponiveis[carroIndex].janteOriginalPrefab;
 
@@ -143,7 +168,6 @@ public class CarSelector : MonoBehaviour
         }
     }
 
-    // Métodos para aplicar custo apenas uma vez por modificação
     public void AplicarCustoPintura()
     {
         if (!pinturaAplicada)
@@ -184,7 +208,6 @@ public class CarSelector : MonoBehaviour
         }
     }
 
-    // Acesso externo
     public GameObject GetCarroAtual() => carroAtual;
     public float GetPrecoAtual() => precoAtual;
 
@@ -196,6 +219,7 @@ public class CarSelector : MonoBehaviour
 
     public int GetIndexAtual() => indexAtual;
 }
+
 
 
 

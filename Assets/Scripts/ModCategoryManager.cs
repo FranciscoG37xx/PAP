@@ -14,7 +14,8 @@ public class ModCategorySelector : MonoBehaviour
     private Coroutine moverCarroCoroutine;
     private int currentIndex = 0;
 
-    [SerializeField] private GameObject carro;
+    private GameObject carro => FindObjectOfType<CarSelector>()?.carroAtual;
+
     private Vector3 carroPosicaoOriginal;
     [SerializeField] private Vector3 deslocamentoPintura = new Vector3(2f, 0f, 0f);
 
@@ -150,10 +151,12 @@ public class ModCategorySelector : MonoBehaviour
                 colorGrid.AtivarColorGrid();
 
             if (carro != null)
-            {
-                if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
-                moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
-            }
+{
+    carroPosicaoOriginal = carro.transform.position;
+    if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+    moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
+}
+
         }
         else if (nome.Contains("jantes"))
         {

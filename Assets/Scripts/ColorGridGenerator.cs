@@ -11,6 +11,9 @@ public class ColorGridGenerator : MonoBehaviour
 
     [Header("Referências")]
     public Renderer carroRenderer;
+
+    public MeshRenderer[] porscheRenderers;
+
     public AudioSource audioSource;
     public AudioClip pintarSom;
 
@@ -96,45 +99,55 @@ void OnColorSelected(Color selected)
 {
     Debug.Log("Cor selecionada: " + selected);
 
-    // Pintar o carro
-    if (carroRenderer != null)
+    string carroAtual = FindObjectOfType<CarSelector>()?.carroAtual?.name;
+
+    Color corAnterior = Color.clear;
+
+    if (carroAtual != null && carroAtual.ToLower().Contains("porsche") && porscheRenderers != null)
+    {
+        foreach (MeshRenderer rend in porscheRenderers)
+        {
+            foreach (Material mat in rend.materials)
+            {
+                if (mat.HasProperty("_Color"))
+                {
+                    corAnterior = mat.color;
+                    mat.color = selected;
+                    mat.SetFloat("_Metallic", 0.5f);
+                    mat.SetFloat("_Glossiness", 0.8f);
+                }
+            }
+        }
+
+        // Como Porsche não tem carroRenderer, criamos temporariamente um "fake" para o spoiler
+        // Ou melhor, chamamos um método que pinta spoilers baseado no root do primeiro Porsche renderer
+        if (porscheRenderers.Length > 0)
+        {
+            var root = porscheRenderers[0].transform.root;
+            AplicarCorAoSpoilerSeNecessarioPeloRoot(root, selected);
+        }
+    }
+    else if (carroRenderer != null) // Audi ou outros carros
     {
         Material mat = carroRenderer.material;
-        Color corAnterior = mat.color;
+        corAnterior = mat.color;
 
         mat.color = selected;
         mat.SetFloat("_Metallic", 0.5f);
         mat.SetFloat("_Glossiness", 0.8f);
 
-        // Atualiza a cor no manager
-        if (CorPrimariaManager.Instance != null)
-            CorPrimariaManager.Instance.corAtualDoCarro = selected;
-
-        // Pintar todos os spoilers (ativos e inativos) que tenham a mesma cor anterior do carro
-        GameObject[] todos = FindObjectsOfType<GameObject>(true);
-        foreach (GameObject obj in todos)
-        {
-            if (!obj.name.ToLower().Contains("spoiler")) continue;
-
-            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
-            foreach (Renderer rend in renderers)
-            {
-                foreach (var matSpoiler in rend.materials)
-                {
-                    if (matSpoiler.HasProperty("_Color") && matSpoiler.color == corAnterior)
-                    {
-                        matSpoiler.color = selected;
-                    }
-                }
-            }
-        }
+        AplicarCorAoSpoilerSeNecessario(corAnterior, selected);
     }
-    
+
+    // Atualiza no manager
+    if (CorPrimariaManager.Instance != null)
+        CorPrimariaManager.Instance.corAtualDoCarro = selected;
+
+    // Aplica custo da pintura
     FindObjectOfType<CarSelector>()?.AplicarCustoPintura();
 
-
-    // Atualiza a cor ativa do SpoilerColorToggle (se existir na cena)
-        var toggle = FindObjectOfType<SpoilerColorToggle>();
+    // Atualiza o toggle do spoiler (se existir)
+    var toggle = FindObjectOfType<SpoilerColorToggle>();
     if (toggle != null)
     {
         toggle.SetUltimaCorUsada(selected);
@@ -150,6 +163,27 @@ void OnColorSelected(Color selected)
             audioSource.PlayOneShot(pintarSom);
     }
 }
+
+// Método auxiliar para Porsche, aplicando cor ao spoiler a partir do root do primeiro renderer Porsche
+void AplicarCorAoSpoilerSeNecessarioPeloRoot(Transform root, Color novaCor)
+{
+    Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+
+    foreach (Renderer r in renderers)
+    {
+        if (!r.name.ToLower().Contains("spoiler")) continue;
+
+        foreach (Material mat in r.materials)
+        {
+            if (mat.HasProperty("_Color") && mat.color != corSecundaria)
+            {
+                mat.color = novaCor;
+            }
+        }
+    }
+}
+
+
 
 
 

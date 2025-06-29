@@ -60,7 +60,7 @@ public class SpoilerColorToggle : MonoBehaviour
         if (audioSource != null && somPintar != null)
             if (!audioSource.gameObject.activeInHierarchy)
                 audioSource.gameObject.SetActive(true);
-            audioSource.PlayOneShot(somPintar);
+        audioSource.PlayOneShot(somPintar);
     }
 
     public void AplicarCorASpoilers()
@@ -78,6 +78,8 @@ public class SpoilerColorToggle : MonoBehaviour
                     mat.color = ultimaCorUsada;
             }
         }
+
+
     }
 
     public Color GetCorAtualDoSpoiler()
@@ -93,11 +95,15 @@ public class SpoilerColorToggle : MonoBehaviour
     }
 
     public void SetUltimaCorUsada(Color novaCor)
-{
-    ultimaCorUsada = novaCor;
-}
+    {
+        ultimaCorUsada = novaCor;
+    }
+
+
+
 
 }
+
 
 
 
