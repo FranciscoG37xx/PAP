@@ -11,7 +11,7 @@ public class LoginManager : MonoBehaviour
 {
     public TMP_InputField emailField;
     public TMP_InputField passwordField;
-    public TMP_Text feedbackMessage;
+    public TMP_Text feedbackMessage1;
     public Button loginButton;
 
     private string connectionString = "Server=localhost;Database=autorevamp_bd;User Id=root;Password=;SslMode=None;";
@@ -23,12 +23,18 @@ public class LoginManager : MonoBehaviour
 
     public void AttemptLogin()
     {
+        Debug.Log($"Tentando login no GameObject: {this.gameObject.name}");
+        if (feedbackMessage1 == null)
+        {
+            Debug.LogError("feedbackMessage está null! Verifica no Inspector.");
+            return;
+        }
         string email = emailField.text.Trim();
         string password = passwordField.text;
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            feedbackMessage.text = "Preenche todos os campos!";
+            feedbackMessage1.text = "Preenche todos os campos!";
             return;
         }
 
@@ -75,26 +81,27 @@ public class LoginManager : MonoBehaviour
                                 UserSession.UserID = userId;
                                 UserSession.Email = email;
 
-                                feedbackMessage.text = "Login bem-sucedido!";
+                                feedbackMessage1.text = "Login bem-sucedido!";
                                 Debug.Log($"Login: {username} ({email})");
 
-                                SceneManager.LoadScene("MainScene");
+                                SceneManager.LoadScene("LoadingScene");
                             }
                             else
                             {
-                                feedbackMessage.text = "Senha incorreta!";
+                                feedbackMessage1.text = "Senha incorreta!";
                             }
                         }
                         else
                         {
-                            feedbackMessage.text = "Email não encontrado!";
+                            feedbackMessage1.text = "Email não encontrado!";
                         }
                     }
                 }
+                
             }
             catch (Exception ex)
             {
-                feedbackMessage.text = "Erro ao conectar ao MySQL!";
+                feedbackMessage1.text = "Erro ao conectar ao MySQL!";
                 Debug.LogError("Erro MySQL: " + ex.Message);
             }
         }

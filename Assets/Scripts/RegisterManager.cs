@@ -11,7 +11,7 @@ public class RegisterManager : MonoBehaviour
     public TMP_InputField emailField;
     public TMP_InputField usernameField;
     public TMP_InputField passwordField;
-    public TMP_Text feedbackMessage;
+    public TMP_Text feedbackMessage2;
     public Button createAccountButton;
 
     private string connectionString = "Server=localhost;Database=autorevamp_bd;User Id=root;Password=;SslMode=None;";
@@ -23,59 +23,71 @@ public class RegisterManager : MonoBehaviour
 
     public void CreateAccount()
     {
+        if (feedbackMessage2 == null )
+         {
+             Debug.LogError("One or more fields are not assigned in the Inspector.");
+             return;
+         }
         string email = emailField.text.Trim();
         string username = usernameField.text.Trim();
         string password = passwordField.text;
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            feedbackMessage.text = "Preenche todos os campos!";
+            feedbackMessage2.text = "Preenche todos os campos!";
             return;
         }
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        if (!email.Contains("@") || !email.Contains("."))
         {
-            try
+           feedbackMessage2.text = "Email Inválido";
+           return;
+        }
+
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
-                Debug.Log("Conexão ao MySQL estabelecida!");
-
-                string checkQuery = "SELECT COUNT(*) FROM users WHERE Email = @Email OR Username = @Username";
-                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection))
+                try
                 {
-                    checkCmd.Parameters.AddWithValue("@Email", email);
-                    checkCmd.Parameters.AddWithValue("@Username", username);
-                    int userExists = Convert.ToInt32(checkCmd.ExecuteScalar());
+                    connection.Open();
+                    Debug.Log("Conexão ao MySQL estabelecida!");
 
-                    if (userExists > 0)
+                    string checkQuery = "SELECT COUNT(*) FROM users WHERE Email = @Email OR Username = @Username";
+                    using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection))
                     {
-                        feedbackMessage.text = "Email ou Username já existem!";
-                        return;
+                        checkCmd.Parameters.AddWithValue("@Email", email);
+                        checkCmd.Parameters.AddWithValue("@Username", username);
+                        int userExists = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                        if (userExists > 0)
+                        {
+                            feedbackMessage2.text = "Email ou Username já existem!";
+                            return;
+                        }
+                    }
+
+                    string salt = GenerateSalt();
+                    string passwordHash = HashPassword(password, salt);
+
+                    string insertQuery = "INSERT INTO users (Email, Username, PasswordHash, Salt) VALUES (@Email, @Username, @PasswordHash, @Salt)";
+                    using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, connection))
+                    {
+                        insertCmd.Parameters.AddWithValue("@Email", email);
+                        insertCmd.Parameters.AddWithValue("@Username", username);
+                        insertCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                        insertCmd.Parameters.AddWithValue("@Salt", salt);
+                        insertCmd.ExecuteNonQuery();
+
+                        feedbackMessage2.text = "Conta criada com sucesso!";
+                        Debug.Log("Nova conta criada: " + username);
                     }
                 }
-
-                string salt = GenerateSalt();
-                string passwordHash = HashPassword(password, salt);
-
-                string insertQuery = "INSERT INTO users (Email, Username, PasswordHash, Salt) VALUES (@Email, @Username, @PasswordHash, @Salt)";
-                using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, connection))
+                catch (Exception ex)
                 {
-                    insertCmd.Parameters.AddWithValue("@Email", email);
-                    insertCmd.Parameters.AddWithValue("@Username", username);
-                    insertCmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
-                    insertCmd.Parameters.AddWithValue("@Salt", salt);
-                    insertCmd.ExecuteNonQuery();
-
-                    feedbackMessage.text = "Conta criada com sucesso!";
-                    Debug.Log("Nova conta criada: " + username);
+                    feedbackMessage2.text = "Erro ao criar conta!";
+                    Debug.LogError("Erro MySQL: " + ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                feedbackMessage.text = "Erro ao criar conta!";
-                Debug.LogError("Erro MySQL: " + ex.Message);
-            }
-        }
     }
 
     private string GenerateSalt()
