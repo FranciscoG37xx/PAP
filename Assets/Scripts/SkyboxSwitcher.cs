@@ -19,7 +19,7 @@ public class SkyboxSwitcher : MonoBehaviour
         // alternar a cor/intensidade da luz também
         if (luzDirecional != null)
         {
-            luzDirecional.intensity = isDia ? 1.0f : 0.3f;
+            luzDirecional.intensity = isDia ? 1.0f : 0.6f;
             luzDirecional.color = isDia ? Color.white : new Color(0.5f, 0.5f, 0.7f);
         }
 

@@ -2385,7 +2385,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Projeto desenvolvido por Francisco Garrido, respons\xE1vel por toda a
     programa\xE7\xE3o, estrutura e funcionalidade da aplica\xE7\xE3o.\n\nContribui\xE7\xE3o
-    de M\xF3nica Garrido, no o design dos \xEDcones e ecr\xE3 de carregamento. "
+    de M\xF3nica Garrido, no design dos \xEDcones, LogIn e ecr\xE3 de carregamento. "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b2ffeab086b92ce498bcf2efb6cece07, type: 2}
   m_sharedMaterial: {fileID: -3529686705597397285, guid: b2ffeab086b92ce498bcf2efb6cece07, type: 2}
@@ -3547,7 +3547,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.098039225, g: 0.098039225, b: 0.098039225, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
