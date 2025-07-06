@@ -15,7 +15,6 @@ public class ModCategorySelector : MonoBehaviour
     private int currentIndex = 0;
 
     private GameObject carro => FindObjectOfType<CarSelector>()?.carroAtual;
-
     private Vector3 carroPosicaoOriginal;
     [SerializeField] private Vector3 deslocamentoPintura = new Vector3(2f, 0f, 0f);
 
@@ -31,9 +30,7 @@ public class ModCategorySelector : MonoBehaviour
     void Start()
     {
         if (carro != null)
-        {
             carroPosicaoOriginal = carro.transform.position;
-        }
 
         if (cameraTransform != null)
         {
@@ -49,22 +46,15 @@ public class ModCategorySelector : MonoBehaviour
         for (int i = 0; i < categoryPanels.Length; i++)
         {
             int index = i;
-            GameObject panel = categoryPanels[i];
-
-            Button[] buttons = panel.GetComponentsInChildren<Button>(true);
+            Button[] buttons = categoryPanels[i].GetComponentsInChildren<Button>(true);
             foreach (Button btn in buttons)
-            {
                 btn.onClick.AddListener(() => OnPanelClicked(index));
-            }
 
-            EventTrigger trigger = panel.GetComponent<EventTrigger>();
-            if (trigger == null) trigger = panel.AddComponent<EventTrigger>();
+            EventTrigger trigger = categoryPanels[i].GetComponent<EventTrigger>();
+            if (trigger == null) trigger = categoryPanels[i].AddComponent<EventTrigger>();
 
-            EventTrigger.Entry entry = new EventTrigger.Entry
-            {
-                eventID = EventTriggerType.PointerClick
-            };
-            entry.callback.AddListener((data) => { OnPanelClicked(index); });
+            var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+            entry.callback.AddListener((data) => OnPanelClicked(index));
             trigger.triggers.Add(entry);
         }
     }
@@ -77,10 +67,20 @@ public class ModCategorySelector : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             Next();
 
-        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) &&
-            !EventSystem.current.currentSelectedGameObject)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
         {
-            SelectCurrent();
+            bool algumaCategoriaAtiva = false;
+            foreach (GameObject panel in optionPanels)
+            {
+                if (panel.activeSelf)
+                {
+                    algumaCategoriaAtiva = true;
+                    break;
+                }
+            }
+
+            if (!algumaCategoriaAtiva)
+                SelectCurrent();
         }
     }
 
@@ -126,43 +126,43 @@ public class ModCategorySelector : MonoBehaviour
             return;
         }
 
-        GameObject painelSelecionado = categoryPanels[index];
-        GameObject painelOpcao = optionPanels[index];
+        string nome = categoryPanels[index].name.ToLower();
+        currentIndex = index;
 
-        string nome = painelSelecionado.name.ToLower();
+        HighlightSelected();
 
-        // Só desativa o painel de mods se não for a categoria de troca de carro
-        if (panelMods != null && !nome.Contains("carro"))
-            panelMods.SetActive(false);
-
-        foreach (GameObject option in optionPanels)
+        // Desativa todos os painéis
+        foreach (GameObject panel in optionPanels)
         {
-            if (option != null)
-                option.SetActive(false);
+            if (panel != null)
+                panel.SetActive(false);
         }
 
+        // Ativa o painel correspondente
+        GameObject painelOpcao = optionPanels[index];
         if (painelOpcao != null)
             painelOpcao.SetActive(true);
+
+        // Só esconde panelMods se não for a troca de carro
+        if (panelMods != null && !nome.Contains("carro"))
+            panelMods.SetActive(false);
 
         if (nome.Contains("pintura"))
         {
             var colorGrid = FindObjectOfType<ColorGridGenerator>();
-            if (colorGrid != null)
-                colorGrid.AtivarColorGrid();
+            if (colorGrid != null) colorGrid.AtivarColorGrid();
 
             if (carro != null)
-{
-    carroPosicaoOriginal = carro.transform.position;
-    if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
-    moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura, 0.6f));
-}
-
+            {
+                carroPosicaoOriginal = carro.transform.position;
+                if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
+                moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal + deslocamentoPintura));
+            }
         }
         else if (nome.Contains("jantes"))
         {
             var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
-            if (janteGrid != null)
-                janteGrid.gameObject.SetActive(true);
+            if (janteGrid != null) janteGrid.gameObject.SetActive(true);
 
             if (cameraTransform != null && janteFocusPoint != null)
             {
@@ -170,57 +170,61 @@ public class ModCategorySelector : MonoBehaviour
                 StartCoroutine(FocarCameraNaJante(janteFocusPoint.position + cameraOffset));
             }
         }
-    
-else
-{
-    ResetCameraPosition();
-}
+        else
+        {
+            ResetCameraPosition();
+        }
+    }
 
-}
-
-
+    // ---------- Fechar Categorias ----------
     public void FecharPainelDePintura()
     {
         FecharPainelPorNome("pintura");
+
         var colorGrid = FindObjectOfType<ColorGridGenerator>();
-        if (colorGrid != null)
-            colorGrid.gameObject.SetActive(false);
+        if (colorGrid != null) colorGrid.gameObject.SetActive(false);
 
         if (carro != null)
         {
             if (moverCarroCoroutine != null) StopCoroutine(moverCarroCoroutine);
-            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal, 0.6f));
+            moverCarroCoroutine = StartCoroutine(MoverCarroSuavemente(carroPosicaoOriginal));
         }
+
+        HighlightSelected();
     }
 
     public void FecharPainelDeJantes()
     {
         FecharPainelPorNome("jantes");
+
         var janteGrid = FindObjectOfType<JanteColorGridGenerator>();
-        if (janteGrid != null)
-            janteGrid.gameObject.SetActive(false);
+        if (janteGrid != null) janteGrid.gameObject.SetActive(false);
+
         ResetCameraPosition();
+        HighlightSelected();
     }
 
     public void FecharPainelDeSpoiler()
     {
         FecharPainelPorNome("spoiler");
         ResetCameraPosition();
+        HighlightSelected();
     }
 
     public void FecharPainelDeCarro()
     {
         FecharPainelPorNome("carro");
         ResetCameraPosition();
+        HighlightSelected();
     }
 
     void FecharPainelPorNome(string nome)
     {
-        foreach (GameObject painel in optionPanels)
+        foreach (GameObject panel in optionPanels)
         {
-            if (painel != null && painel.name.ToLower().Contains(nome.ToLower()))
+            if (panel != null && panel.name.ToLower().Contains(nome.ToLower()))
             {
-                painel.SetActive(false);
+                panel.SetActive(false);
                 break;
             }
         }
@@ -238,15 +242,16 @@ else
         }
     }
 
-    IEnumerator MoverCarroSuavemente(Vector3 destino, float duracao = 0.5f)
+    // ---------- Coroutines ----------
+    IEnumerator MoverCarroSuavemente(Vector3 destino, float duracao = 0.6f)
     {
         Vector3 origem = carro.transform.position;
-        float tempoDecorrido = 0f;
+        float tempo = 0f;
 
-        while (tempoDecorrido < duracao)
+        while (tempo < duracao)
         {
-            carro.transform.position = Vector3.Lerp(origem, destino, tempoDecorrido / duracao);
-            tempoDecorrido += Time.deltaTime;
+            carro.transform.position = Vector3.Lerp(origem, destino, tempo / duracao);
+            tempo += Time.deltaTime;
             yield return null;
         }
 
@@ -257,7 +262,6 @@ else
     {
         Vector3 origem = cameraTransform.position;
         Quaternion rotOrigem = cameraTransform.rotation;
-
         Quaternion rotFinal = Quaternion.LookRotation(janteFocusPoint.position - destino);
 
         float duracao = 0.6f;
@@ -295,6 +299,7 @@ else
         cameraTransform.rotation = rotFinal;
     }
 }
+
 
 
 

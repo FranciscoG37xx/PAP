@@ -1577,8 +1577,8 @@ RectTransform:
   - {fileID: 819172555}
   - {fileID: 497086214}
   - {fileID: 798416310}
-  - {fileID: 1497689300}
   - {fileID: 1186344604}
+  - {fileID: 1497689300}
   - {fileID: 1340931841}
   - {fileID: 775209355}
   - {fileID: 1566860882}
@@ -4435,9 +4435,9 @@ MonoBehaviour:
   - {fileID: 1451533456}
   - {fileID: 50044257}
   optionPanels: []
-  leftArrow: {fileID: 0}
-  rightArrow: {fileID: 0}
-  panelMods: {fileID: 0}
+  leftArrow: {fileID: 658399918}
+  rightArrow: {fileID: 1908709659}
+  panelMods: {fileID: 819172554}
   deslocamentoPintura: {x: 2, y: 0, z: 0}
   cameraTransform: {fileID: 0}
   janteFocusPoint: {fileID: 0}
@@ -8916,6 +8916,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1664882463}
   m_CullTransparentMesh: 1
+--- !u!1 &1731970608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1731970610}
+  - component: {fileID: 1731970609}
+  m_Layer: 0
+  m_Name: LogOut/Close
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1731970609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731970608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a166fa60a82289643bf6cfb36d8f0aaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1731970610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731970608}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 949.8504, y: 574.8695, z: -8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1736210387
 GameObject:
   m_ObjectHideFlags: 0
@@ -10605,7 +10649,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2012192783}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1731970609}
+        m_TargetAssemblyTypeName: LogoutAndExit, Assembly-CSharp
+        m_MethodName: LogoutAndQuit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2012192783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11407,7 +11463,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b9edd50cc8c59794bab4730fd09af416, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ef26441acdaa5b4da655fd40e8c7475, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11548,3 +11604,4 @@ SceneRoots:
   - {fileID: 110999982}
   - {fileID: 1758987832}
   - {fileID: 1935783139}
+  - {fileID: 1731970610}
