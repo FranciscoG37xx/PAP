@@ -220,26 +220,39 @@ public class WheelSwitcher : MonoBehaviour
         SwitchWheels(0);
         precoAplicadoJante = false;
     }
-    
+
     public void ResetarCorDasJantes(Color cor)
-{
-    foreach (GameObject roda in currentWheels)
     {
-        if (roda == null) continue;
-
-        Renderer[] renderers = roda.GetComponentsInChildren<Renderer>(true);
-        foreach (Renderer rend in renderers)
+        foreach (GameObject roda in currentWheels)
         {
-            if (!rend.name.ToLower().Contains("rim")) continue;
+            if (roda == null) continue;
 
-            foreach (Material mat in rend.materials)
+            Renderer[] renderers = roda.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer rend in renderers)
             {
-                if (mat.HasProperty("_Color"))
-                    mat.color = cor;
+                if (!rend.name.ToLower().Contains("rim")) continue;
+
+                foreach (Material mat in rend.materials)
+                {
+                    if (mat.HasProperty("_Color"))
+                        mat.color = cor;
+                }
             }
         }
     }
+
+public void AplicarJante(int id)
+{
+    if (id >= 0 && id < wheelPrefabs.Length)
+    {
+        SwitchWheels(id); // este método já existe e troca a jante
+    }
+    else
+    {
+        Debug.LogWarning("ID de jante inválido ao restaurar histórico: " + id);
+    }
 }
+
 
 
 }

@@ -95,7 +95,7 @@ void Start()
         }
     }
 
-void OnColorSelected(Color selected)
+public void OnColorSelected(Color selected)
 {
     Debug.Log("Cor selecionada: " + selected);
 

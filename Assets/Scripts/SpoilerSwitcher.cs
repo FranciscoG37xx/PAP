@@ -54,7 +54,7 @@ public class SpoilerSwitcher : MonoBehaviour
         GameObject newSpoiler = Instantiate(spoilerPrefabs[index]);
         newSpoiler.transform.SetParent(originalSpoiler.transform.parent);
 
-        
+
 
         // Instanciar os materiais para evitar partilha
         foreach (Renderer rend in newSpoiler.GetComponentsInChildren<Renderer>(true))
@@ -119,6 +119,19 @@ public class SpoilerSwitcher : MonoBehaviour
     {
         originalSpoiler = novo;
     }
+    
+    public void AplicarSpoiler(int id)
+{
+    if (id >= 0 && id < spoilerPrefabs.Length)
+    {
+        SwitchSpoiler(id); // método já existente para trocar o spoiler
+    }
+    else
+    {
+        Debug.LogWarning("ID de spoiler inválido ao restaurar histórico: " + id);
+    }
+}
+
 }
 
 

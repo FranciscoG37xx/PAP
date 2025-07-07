@@ -117,19 +117,19 @@ public class CarSelector : MonoBehaviour
             if (colorGrid != null)
                 colorGrid.SetCarRenderer(renderer);
 
-                // Atualiza o CorPrimariaManager com a nova cor inicial do carro
-CorPrimariaManager.Instance.InicializarComCorRenderer(renderer);
+            // Atualiza o CorPrimariaManager com a nova cor inicial do carro
+            CorPrimariaManager.Instance.InicializarComCorRenderer(renderer);
 
-// Aplica a cor atual aos spoilers do carro (se houverem)
-var spoilers = carro.GetComponentsInChildren<Renderer>(includeInactive: true);
-foreach (var r in spoilers)
-{
-    if (r.gameObject.name.ToLower().Contains("spoiler"))
-    {
-        if (r.material.HasProperty("_Color"))
-            r.material.color = CorPrimariaManager.Instance.corAtualDoCarro;
-    }
-}
+            // Aplica a cor atual aos spoilers do carro (se houverem)
+            var spoilers = carro.GetComponentsInChildren<Renderer>(includeInactive: true);
+            foreach (var r in spoilers)
+            {
+                if (r.gameObject.name.ToLower().Contains("spoiler"))
+                {
+                    if (r.material.HasProperty("_Color"))
+                        r.material.color = CorPrimariaManager.Instance.corAtualDoCarro;
+                }
+            }
 
 
             var spoilerColorToggle = FindObjectOfType<SpoilerColorToggle>();
@@ -218,6 +218,23 @@ foreach (var r in spoilers)
     }
 
     public int GetIndexAtual() => indexAtual;
+    
+    public void AplicarPrecoDoHistorico(CustomizacaoData data)
+{
+    /*
+    float precoBase = carroAtual.precoBase;
+    float total = precoBase;
+
+    // Valores de aumento (usa os teus valores reais)
+    if (data.idJante != 0) total += 1000f;
+    if (data.idSpoiler != 0) total += 1500f;
+    if (data.corHex != "#FFFFFF" && data.corHex != "#ffffff") total += 500f;
+
+    precoAtual = total;
+    AtualizarTextoPreco(); // método que já mostra o preço na UI
+    */
+}
+
 }
 
 

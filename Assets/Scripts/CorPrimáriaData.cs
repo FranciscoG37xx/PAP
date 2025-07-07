@@ -22,6 +22,9 @@ public class CorPrimariaManager : MonoBehaviour
             corAtualDoCarro = carroRenderer.material.color;
         }
     }
+
+    
+
 }
 
 

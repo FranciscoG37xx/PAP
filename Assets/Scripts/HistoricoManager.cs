@@ -23,15 +23,16 @@ public class HistoricoManager : MonoBehaviour
             historicoPanel.SetActive(false);
     }
 
-    // Método chamado ao clicar em "Histórico"
-    public void AbrirHistorico()
-    {
-        if (historicoPanel != null)
-        {
-            historicoPanel.SetActive(true);
-            AtualizarListaHistorico();
-        }
-    }
+    public void AlternarHistorico()
+{
+    bool ativo = historicoPanel.activeSelf;
+
+    historicoPanel.SetActive(!ativo);
+
+    if (!ativo)
+        AtualizarListaHistorico();
+}
+
 
     // Fecha o painel de histórico
     public void FecharHistorico()
@@ -83,16 +84,25 @@ public class HistoricoManager : MonoBehaviour
         // Estes métodos devem ser criados nos respetivos scripts:
 
         // Aplica a jante guardada (ex: WheelSwitcher)
-        // FindObjectOfType<WheelSwitcher>()?.AplicarJante(data.idJante);
+        FindObjectOfType<WheelSwitcher>()?.AplicarJante(data.idJante);
 
-        // Aplica a cor principal (ex: CorPrimariaManager)
-        // FindObjectOfType<CorPrimariaManager>()?.AplicarCor(data.corHex);
+        // Converte o hex guardado para Color 
+if (ColorUtility.TryParseHtmlString(data.corHex, out Color corRestaurada))
+{
+    // Atualiza a cor atual no manager
+    CorPrimariaManager.Instance.corAtualDoCarro = corRestaurada;
+
+    // Aplica a cor visualmente no carro + atualiza a UI
+    FindObjectOfType<ColorGridGenerator>()?.OnColorSelected(corRestaurada);
+}
+
+
 
         // Aplica o spoiler (ex: SpoilerSwitcher)
-        // FindObjectOfType<SpoilerSwitcher>()?.AplicarSpoiler(data.idSpoiler);
+        FindObjectOfType<SpoilerSwitcher>()?.AplicarSpoiler(data.idSpoiler);
 
         // Atualiza o preço com base na customização restaurada (ex: CarSelector ou PrecoManager)
-        // FindObjectOfType<CarSelector>()?.AplicarPrecoDoHistorico(data);
+        FindObjectOfType<CarSelector>()?.AplicarPrecoDoHistorico(data);
     }
 }
 
