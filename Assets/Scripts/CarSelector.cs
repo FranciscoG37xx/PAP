@@ -221,19 +221,53 @@ public class CarSelector : MonoBehaviour
     
     public void AplicarPrecoDoHistorico(CustomizacaoData data)
 {
-    /*
-    float precoBase = carroAtual.precoBase;
+    if (indexAtual < 0 || indexAtual >= carrosDisponiveis.Length) return;
+
+    // Começa com o preço base do carro atual
+    float precoBase = carrosDisponiveis[indexAtual].precoBase;
     float total = precoBase;
 
-    // Valores de aumento (usa os teus valores reais)
-    if (data.idJante != 0) total += 1000f;
-    if (data.idSpoiler != 0) total += 1500f;
-    if (data.corHex != "#FFFFFF" && data.corHex != "#ffffff") total += 500f;
+    // Reset das flags de custo
+    pinturaAplicada = false;
+    jantesTrocaAplicada = false;
+    pinturaJantesAplicada = false;
+    spoilerAplicado = false;
+
+    // Verifica se a cor do carro é diferente da cor original salva no prefab
+    if (!string.IsNullOrEmpty(data.corHex) &&
+        data.corHex.ToLower() != "#ffffff")
+    {
+        total += custoPinturaCarro;
+        pinturaAplicada = true;
+    }
+
+    // Verifica se houve troca de jantes
+    if (data.idJante != 0)
+    {
+        total += custoJanteNova;
+        jantesTrocaAplicada = true;
+    }
+
+    // Verifica se houve pintura de jantes
+    if (!string.IsNullOrEmpty(data.corJanteHex) &&
+        data.corJanteHex.ToLower() != "#ffffff")
+    {
+        total += custoPinturaJante;
+        pinturaJantesAplicada = true;
+    }
+
+    // Verifica se houve troca de spoiler
+    if (data.idSpoiler != 0)
+    {
+        total += custoSpoilerNovo;
+        spoilerAplicado = true;
+    }
 
     precoAtual = total;
-    AtualizarTextoPreco(); // método que já mostra o preço na UI
-    */
+    AtualizarPrecoUI();
 }
+
+
 
 }
 

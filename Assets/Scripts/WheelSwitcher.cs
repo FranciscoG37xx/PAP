@@ -69,7 +69,7 @@ public class WheelSwitcher : MonoBehaviour
         SwitchWheels(currentIndex);
     }
 
-    private void SwitchWheels(int index)
+    public void SwitchWheels(int index)
     {
         if (wheelPrefabs.Length == 0 || currentWheels.Length != 4 || wheelRotations.Length != 4)
         {

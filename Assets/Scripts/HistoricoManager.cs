@@ -24,86 +24,132 @@ public class HistoricoManager : MonoBehaviour
     }
 
     public void AlternarHistorico()
-{
-    bool ativo = historicoPanel.activeSelf;
+    {
+        bool ativo = historicoPanel.activeSelf;
+        historicoPanel.SetActive(!ativo);
 
-    historicoPanel.SetActive(!ativo);
+        if (!ativo)
+            AtualizarListaHistorico();
+    }
 
-    if (!ativo)
-        AtualizarListaHistorico();
-}
-
-
-    // Fecha o painel de histórico
     public void FecharHistorico()
     {
         if (historicoPanel != null)
             historicoPanel.SetActive(false);
     }
 
-    // Guarda os dados atuais no histórico
     public void GuardarHistorico(CustomizacaoData data)
     {
         historicoGuardado.Add(data);
         Debug.Log("Histórico guardado: " + data.nomeExibicao);
     }
 
-    // Atualiza a UI do histórico
     void AtualizarListaHistorico()
     {
-        // Limpar os itens antigos
         foreach (Transform filho in content)
             Destroy(filho.gameObject);
 
-        // Criar novos itens com base na lista
         foreach (CustomizacaoData item in historicoGuardado)
         {
             GameObject novoItem = Instantiate(historicoItemPrefab, content);
 
-            // Definir texto
             Text texto = novoItem.GetComponentInChildren<Text>();
             if (texto != null)
                 texto.text = item.nomeExibicao;
 
-            // Definir ação do botão
             Button botao = novoItem.GetComponentInChildren<Button>();
             if (botao != null)
             {
-                CustomizacaoData copia = item; // evitar referência errada no delegate
+                CustomizacaoData copia = item;
                 botao.onClick.AddListener(() => RestaurarCustomizacao(copia));
             }
         }
     }
 
-    // Restaura uma customização guardada no histórico
     void RestaurarCustomizacao(CustomizacaoData data)
     {
         Debug.Log("Restaurar histórico: " + data.nomeExibicao);
+        AplicarCustomizacaoDoHistorico(data);
+    }
 
-        // Chamar métodos responsáveis por aplicar os dados guardados
-        // Estes métodos devem ser criados nos respetivos scripts:
+    public void AplicarCustomizacaoDoHistorico(CustomizacaoData data)
+    {
+        CarSelector carSelector = FindObjectOfType<CarSelector>();
+        if (carSelector == null || carSelector.GetCarroAtual() == null) return;
 
-        // Aplica a jante guardada (ex: WheelSwitcher)
-        FindObjectOfType<WheelSwitcher>()?.AplicarJante(data.idJante);
+        GameObject carro = carSelector.GetCarroAtual();
 
-        // Converte o hex guardado para Color 
-if (ColorUtility.TryParseHtmlString(data.corHex, out Color corRestaurada))
-{
-    // Atualiza a cor atual no manager
-    CorPrimariaManager.Instance.corAtualDoCarro = corRestaurada;
+        // Aplicar cor do carro
+        if (!string.IsNullOrEmpty(data.corHex))
+        {
+            if (ColorUtility.TryParseHtmlString(data.corHex, out Color cor))
+            {
+                Transform body = carro.transform.Find("Body");
+                if (body != null)
+                {
+                    Renderer renderer = body.GetComponent<Renderer>();
+                    if (renderer != null)
+                        renderer.material.color = cor;
 
-    // Aplica a cor visualmente no carro + atualiza a UI
-    FindObjectOfType<ColorGridGenerator>()?.OnColorSelected(corRestaurada);
-}
+                    if (CorPrimariaManager.Instance != null)
+                        CorPrimariaManager.Instance.corAtualDoCarro = cor;
+                }
+            }
+        }
 
+        // Aplicar jante e cor da jante
+        WheelSwitcher wheelSwitcher = FindObjectOfType<WheelSwitcher>();
+        if (wheelSwitcher != null)
+        {
+            wheelSwitcher.SwitchWheels(data.idJante);
 
+            if (!string.IsNullOrEmpty(data.corJanteHex) &&
+                ColorUtility.TryParseHtmlString(data.corJanteHex, out Color corJante))
+            {
+                JanteColorGridGenerator janteColor = FindObjectOfType<JanteColorGridGenerator>();
+                if (janteColor != null)
+                {
+                    janteColor.ResetarPreco(); // Evita aplicar custo novamente
+                    janteColor.OnColorSelected(corJante);
+                }
+            }
+        }
 
-        // Aplica o spoiler (ex: SpoilerSwitcher)
-        FindObjectOfType<SpoilerSwitcher>()?.AplicarSpoiler(data.idSpoiler);
+        // Aplicar spoiler e cor do spoiler
+        SpoilerSwitcher spoilerSwitcher = FindObjectOfType<SpoilerSwitcher>();
+        if (spoilerSwitcher != null)
+        {
+            spoilerSwitcher.AplicarSpoiler(data.idSpoiler);
 
-        // Atualiza o preço com base na customização restaurada (ex: CarSelector ou PrecoManager)
-        FindObjectOfType<CarSelector>()?.AplicarPrecoDoHistorico(data);
+            if (!string.IsNullOrEmpty(data.corSpoilerHex) &&
+                ColorUtility.TryParseHtmlString(data.corSpoilerHex, out Color corSpoiler))
+            {
+                SpoilerColorManager manager = FindObjectOfType<SpoilerColorManager>();
+                if (manager != null)
+                {
+                    // Verifica se é necessário alternar a cor
+                    bool corSalvaEhSecundaria = CoresIguais(corSpoiler, manager.corSecundariaPadrao);
+                    if (manager.usarCorSecundaria != corSalvaEhSecundaria)
+                    {
+                        manager.AlternarCor();
+                    }
+                }
+            }
+        }
+
+        // Aplicar preço do histórico (única fonte oficial de preço atual)
+        carSelector.AplicarPrecoDoHistorico(data);
+    }
+
+    // Função auxiliar para comparar cores com tolerância
+    bool CoresIguais(Color a, Color b, float tolerancia = 0.01f)
+    {
+        return Mathf.Abs(a.r - b.r) < tolerancia &&
+               Mathf.Abs(a.g - b.g) < tolerancia &&
+               Mathf.Abs(a.b - b.b) < tolerancia;
     }
 }
+
+
 
 

@@ -38,7 +38,7 @@ public class JanteColorGridGenerator : MonoBehaviour
         }
     }
 
-    private void OnColorSelected(Color selected)
+    public void OnColorSelected(Color selected)
     {
         Debug.Log("Cor de jante selecionada: " + selected);
 
