@@ -42,6 +42,20 @@ public class JanteColorGridGenerator : MonoBehaviour
     {
         Debug.Log("Cor de jante selecionada: " + selected);
 
+        if (HistoricoManager.Instance != null)
+{
+    string corJanteHex = "#" + ColorUtility.ToHtmlStringRGB(selected);
+    HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+        "Pintura da jante aplicada",
+        -1,
+        null,
+        -1,
+        corJanteHex,
+        null
+    ));
+}
+
+
         if (janteMaterialAlvo != null)
         {
             // Garantir que não estamos a modificar uma instância compartilhada

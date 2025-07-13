@@ -196,6 +196,20 @@ public class WheelSwitcher : MonoBehaviour
             AplicarPrecoJante();
         }
 
+        if (HistoricoManager.Instance != null && currentIndex != 0)
+{
+    HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+        "Jante trocada",
+        index, // o ID da jante
+        null,
+        -1,
+        null,
+        null
+    ));
+}
+
+      currentIndex = index;
+
     }
 
 

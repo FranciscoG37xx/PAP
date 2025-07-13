@@ -1918,7 +1918,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 436273554}
-  - component: {fileID: 436273553}
+  - component: {fileID: 436273555}
   m_Layer: 0
   m_Name: HistoricoManager
   m_TagString: Untagged
@@ -1926,21 +1926,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &436273553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 436273552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9738ecbde7f5f8543bbd237e80d26700, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  historicoPanel: {fileID: 1335952779}
-  content: {fileID: 1627355611}
-  historicoItemPrefab: {fileID: 2020035298276194418, guid: a513250d1620fa543ad5b952eb0022f2, type: 3}
 --- !u!4 &436273554
 Transform:
   m_ObjectHideFlags: 0
@@ -1956,6 +1941,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &436273555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436273552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9738ecbde7f5f8543bbd237e80d26700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  historicoPanel: {fileID: 1335952779}
+  content: {fileID: 1627355611}
+  historicoItemPrefab: {fileID: 2020035298276194418, guid: a513250d1620fa543ad5b952eb0022f2, type: 3}
 --- !u!1 &452121993
 GameObject:
   m_ObjectHideFlags: 0
@@ -5617,13 +5617,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1108439401}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5969,8 +5969,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0015259, y: -0.00084686}
-  m_SizeDelta: {x: 824.23, y: 577.57}
+  m_AnchoredPosition: {x: 117.250824, y: -1.5007}
+  m_SizeDelta: {x: 969.9, y: 574.57}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1264547582
 MonoBehaviour:
@@ -5985,13 +5985,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1627355611}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 5
   m_Viewport: {fileID: 1108439402}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 571092990}
@@ -6009,7 +6009,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1264547580}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -6479,8 +6479,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -43, y: 78}
-  m_SizeDelta: {x: -1095.7761, y: -502.4272}
+  m_AnchoredPosition: {x: 17.78009, y: 64}
+  m_SizeDelta: {x: -713.7888, y: -502.4272}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1335952781
 MonoBehaviour:
@@ -8598,6 +8598,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1627355611}
+  - component: {fileID: 1627355613}
+  - component: {fileID: 1627355612}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -8622,8 +8624,48 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 300}
-  m_Pivot: {x: 0, y: 1}
+  m_SizeDelta: {x: 0, y: 6}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1627355612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627355610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
+--- !u!114 &1627355613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627355610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 3
+    m_Bottom: 3
+  m_ChildAlignment: 0
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1636113564
 GameObject:
   m_ObjectHideFlags: 0
@@ -10307,7 +10349,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 436273553}
+      - m_Target: {fileID: 436273555}
         m_TargetAssemblyTypeName: HistoricoManager, Assembly-CSharp
         m_MethodName: AlternarHistorico
         m_Mode: 1

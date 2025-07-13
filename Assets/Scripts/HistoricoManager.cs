@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class HistoricoManager : MonoBehaviour
 {
+    public static HistoricoManager Instance { get; private set; }
+
     [Header("Referências UI")]
     [Tooltip("Painel que será ativado/desativado ao abrir/fechar o histórico")]
     public GameObject historicoPanel;
@@ -19,6 +21,11 @@ public class HistoricoManager : MonoBehaviour
 
     void Start()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         if (historicoPanel != null)
             historicoPanel.SetActive(false);
     }
@@ -41,7 +48,7 @@ public class HistoricoManager : MonoBehaviour
     public void GuardarHistorico(CustomizacaoData data)
     {
         historicoGuardado.Add(data);
-        Debug.Log("Histórico guardado: " + data.nomeExibicao);
+        Debug.Log("Histórico guardado.");
     }
 
     void AtualizarListaHistorico()
@@ -53,9 +60,9 @@ public class HistoricoManager : MonoBehaviour
         {
             GameObject novoItem = Instantiate(historicoItemPrefab, content);
 
-            Text texto = novoItem.GetComponentInChildren<Text>();
-            if (texto != null)
-                texto.text = item.nomeExibicao;
+            TMPro.TextMeshProUGUI texto = novoItem.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+if (texto != null)
+    texto.text = item.nomeExibicao;
 
             Button botao = novoItem.GetComponentInChildren<Button>();
             if (botao != null)
@@ -68,7 +75,7 @@ public class HistoricoManager : MonoBehaviour
 
     void RestaurarCustomizacao(CustomizacaoData data)
     {
-        Debug.Log("Restaurar histórico: " + data.nomeExibicao);
+        Debug.Log("Restaurar histórico.");
         AplicarCustomizacaoDoHistorico(data);
     }
 
@@ -137,7 +144,7 @@ public class HistoricoManager : MonoBehaviour
             }
         }
 
-        // Aplicar preço do histórico (única fonte oficial de preço atual)
+        // Aplicar preço do histórico
         carSelector.AplicarPrecoDoHistorico(data);
     }
 
@@ -148,7 +155,33 @@ public class HistoricoManager : MonoBehaviour
                Mathf.Abs(a.g - b.g) < tolerancia &&
                Mathf.Abs(a.b - b.b) < tolerancia;
     }
+
+    // Geração automática da descrição
+    string GerarDescricao(CustomizacaoData item)
+    {
+        if (item.idJante >= 0)
+            return "Jante trocada";
+        if (item.idSpoiler >= 0)
+            return "Spoiler trocado";
+        if (!string.IsNullOrEmpty(item.corHex))
+            return "Carro pintado";
+        if (!string.IsNullOrEmpty(item.corJanteHex))
+            return "Cor da jante alterada";
+        if (!string.IsNullOrEmpty(item.corSpoilerHex))
+            return "Cor do spoiler alterada";
+
+        return "Customização aplicada";
+    }
+
+    // Opcional: para adicionar manualmente ao histórico via script
+    public void AdicionarAoHistorico(string texto)
+    {
+        CustomizacaoData novaEntrada = new CustomizacaoData(texto);
+        GuardarHistorico(novaEntrada);
+        AtualizarListaHistorico(); // Se quiser atualizar em tempo real
+    }
 }
+
 
 
 

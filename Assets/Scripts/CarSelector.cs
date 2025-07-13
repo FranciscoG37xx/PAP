@@ -82,7 +82,6 @@ public class CarSelector : MonoBehaviour
 
         ResetarModificacoes();
         ConfigurarSistemasDoCarro(carroAtual, indexAtual);
-        ResetarModificacoes();
     }
 
     void ResetarModificacoes()

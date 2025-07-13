@@ -95,6 +95,18 @@ public class SpoilerSwitcher : MonoBehaviour
 
         // Ativar spoiler original apenas se o índice for 0
         originalSpoiler.SetActive(index == 0);
+
+        if (HistoricoManager.Instance != null && index != 0)
+        {
+            HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+                "Spoiler trocado",
+                -1,
+                null,
+                index, // ID do spoiler
+                null,
+                null
+            ));
+        }
     }
 
     private void AplicarPrecoSpoiler()
@@ -119,17 +131,20 @@ public class SpoilerSwitcher : MonoBehaviour
     {
         originalSpoiler = novo;
     }
-    
+
     public void AplicarSpoiler(int id)
-{
-    if (id >= 0 && id < spoilerPrefabs.Length)
     {
-        SwitchSpoiler(id); // método já existente para trocar o spoiler
-    }
-    else
-    {
-        Debug.LogWarning("ID de spoiler inválido ao restaurar histórico: " + id);
-    }
+        if (id >= 0 && id < spoilerPrefabs.Length)
+        {
+            SwitchSpoiler(id); // método já existente para trocar o spoiler
+        }
+        else
+        {
+            Debug.LogWarning("ID de spoiler inválido ao restaurar histórico: " + id);
+        }
+
+        
+
 }
 
 }

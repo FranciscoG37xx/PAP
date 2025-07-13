@@ -61,6 +61,21 @@ public class SpoilerColorToggle : MonoBehaviour
             if (!audioSource.gameObject.activeInHierarchy)
                 audioSource.gameObject.SetActive(true);
         audioSource.PlayOneShot(somPintar);
+
+        if (HistoricoManager.Instance != null)
+{
+    Color corFinal = algumComCorDoCarro ? corSecundaria : corPrimaria;
+    string corSpoilerHex = "#" + ColorUtility.ToHtmlStringRGB(corFinal);
+    HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+        "Pintura do spoiler aplicada",
+        -1,
+        null,
+        -1,
+        null,
+        corSpoilerHex
+    ));
+}
+
     }
 
     public void AplicarCorASpoilers()

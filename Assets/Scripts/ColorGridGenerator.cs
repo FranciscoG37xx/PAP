@@ -95,73 +95,89 @@ void Start()
         }
     }
 
-public void OnColorSelected(Color selected)
-{
-    Debug.Log("Cor selecionada: " + selected);
-
-    string carroAtual = FindObjectOfType<CarSelector>()?.carroAtual?.name;
-
-    Color corAnterior = Color.clear;
-
-    if (carroAtual != null && carroAtual.ToLower().Contains("porsche") && porscheRenderers != null)
+    public void OnColorSelected(Color selected)
     {
-        foreach (MeshRenderer rend in porscheRenderers)
+        Debug.Log("Cor selecionada: " + selected);
+
+
+        string carroAtual = FindObjectOfType<CarSelector>()?.carroAtual?.name;
+
+        Color corAnterior = Color.clear;
+
+        if (carroAtual != null && carroAtual.ToLower().Contains("porsche") && porscheRenderers != null)
         {
-            foreach (Material mat in rend.materials)
+            foreach (MeshRenderer rend in porscheRenderers)
             {
-                if (mat.HasProperty("_Color"))
+                foreach (Material mat in rend.materials)
                 {
-                    corAnterior = mat.color;
-                    mat.color = selected;
-                    mat.SetFloat("_Metallic", 0.5f);
-                    mat.SetFloat("_Glossiness", 0.8f);
+                    if (mat.HasProperty("_Color"))
+                    {
+                        corAnterior = mat.color;
+                        mat.color = selected;
+                        mat.SetFloat("_Metallic", 0.5f);
+                        mat.SetFloat("_Glossiness", 0.8f);
+                    }
                 }
             }
-        }
 
-        // Como Porsche não tem carroRenderer, criamos temporariamente um "fake" para o spoiler
-        // Ou melhor, chamamos um método que pinta spoilers baseado no root do primeiro Porsche renderer
-        if (porscheRenderers.Length > 0)
+            // Como Porsche não tem carroRenderer, criamos temporariamente um "fake" para o spoiler
+            // Ou melhor, chamamos um método que pinta spoilers baseado no root do primeiro Porsche renderer
+            if (porscheRenderers.Length > 0)
+            {
+                var root = porscheRenderers[0].transform.root;
+                AplicarCorAoSpoilerSeNecessarioPeloRoot(root, selected);
+            }
+        }
+        else if (carroRenderer != null) // Audi ou outros carros
         {
-            var root = porscheRenderers[0].transform.root;
-            AplicarCorAoSpoilerSeNecessarioPeloRoot(root, selected);
+            Material mat = carroRenderer.material;
+            corAnterior = mat.color;
+
+            mat.color = selected;
+            mat.SetFloat("_Metallic", 0.5f);
+            mat.SetFloat("_Glossiness", 0.8f);
+
+            AplicarCorAoSpoilerSeNecessario(corAnterior, selected);
         }
-    }
-    else if (carroRenderer != null) // Audi ou outros carros
-    {
-        Material mat = carroRenderer.material;
-        corAnterior = mat.color;
 
-        mat.color = selected;
-        mat.SetFloat("_Metallic", 0.5f);
-        mat.SetFloat("_Glossiness", 0.8f);
+        // Atualiza no manager
+        if (CorPrimariaManager.Instance != null)
+            CorPrimariaManager.Instance.corAtualDoCarro = selected;
 
-        AplicarCorAoSpoilerSeNecessario(corAnterior, selected);
-    }
+        // Aplica custo da pintura
+        FindObjectOfType<CarSelector>()?.AplicarCustoPintura();
 
-    // Atualiza no manager
-    if (CorPrimariaManager.Instance != null)
-        CorPrimariaManager.Instance.corAtualDoCarro = selected;
+        // Atualiza o toggle do spoiler (se existir)
+        var toggle = FindObjectOfType<SpoilerColorToggle>();
+        if (toggle != null)
+        {
+            toggle.SetUltimaCorUsada(selected);
+        }
 
-    // Aplica custo da pintura
-    FindObjectOfType<CarSelector>()?.AplicarCustoPintura();
+        // Som
+        if (audioSource != null && pintarSom != null)
+        {
+            if (!audioSource.enabled)
+                audioSource.enabled = true;
 
-    // Atualiza o toggle do spoiler (se existir)
-    var toggle = FindObjectOfType<SpoilerColorToggle>();
-    if (toggle != null)
-    {
-        toggle.SetUltimaCorUsada(selected);
-    }
+            if (!audioSource.isPlaying)
+                audioSource.PlayOneShot(pintarSom);
+        }
+    
+    if (HistoricoManager.Instance != null)
+{
+    string corHex = "#" + ColorUtility.ToHtmlStringRGB(selected);
 
-    // Som
-    if (audioSource != null && pintarSom != null)
-    {
-        if (!audioSource.enabled)
-            audioSource.enabled = true;
+    HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+        "Pintura do carro aplicada",
+        -1, // id da jante (não foi alterada)
+        corHex,
+        -1, // id do spoiler (não foi alterado)
+        null, // cor da jante
+        null  // cor do spoiler
+    ));
+}
 
-        if (!audioSource.isPlaying)
-            audioSource.PlayOneShot(pintarSom);
-    }
 }
 
 // Método auxiliar para Porsche, aplicando cor ao spoiler a partir do root do primeiro renderer Porsche
