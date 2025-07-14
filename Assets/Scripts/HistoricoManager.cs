@@ -76,37 +76,36 @@ if (texto != null)
     void RestaurarCustomizacao(CustomizacaoData data)
     {
         Debug.Log("Restaurar histórico.");
+        Debug.Log("Clicaste num item do histórico: " + data.nomeExibicao);
+
         AplicarCustomizacaoDoHistorico(data);
     }
 
     public void AplicarCustomizacaoDoHistorico(CustomizacaoData data)
     {
+        Debug.Log("A aplicar histórico: " + JsonUtility.ToJson(data));
+
         CarSelector carSelector = FindObjectOfType<CarSelector>();
         if (carSelector == null || carSelector.GetCarroAtual() == null) return;
 
         GameObject carro = carSelector.GetCarroAtual();
 
         // Aplicar cor do carro
-        if (!string.IsNullOrEmpty(data.corHex))
+if (!string.IsNullOrEmpty(data.corHex))
+{
+    if (ColorUtility.TryParseHtmlString(data.corHex, out Color cor))
+    {
+        if (CorPrimariaManager.Instance != null)
         {
-            if (ColorUtility.TryParseHtmlString(data.corHex, out Color cor))
-            {
-                Transform body = carro.transform.Find("Body");
-                if (body != null)
-                {
-                    Renderer renderer = body.GetComponent<Renderer>();
-                    if (renderer != null)
-                        renderer.material.color = cor;
-
-                    if (CorPrimariaManager.Instance != null)
-                        CorPrimariaManager.Instance.corAtualDoCarro = cor;
-                }
-            }
+            CorPrimariaManager.Instance.AplicarCor(cor);
         }
+    }
+}
+
 
         // Aplicar jante e cor da jante
         WheelSwitcher wheelSwitcher = FindObjectOfType<WheelSwitcher>();
-        if (wheelSwitcher != null)
+        if (wheelSwitcher != null && data.idJante >= 0)
         {
             wheelSwitcher.SwitchWheels(data.idJante);
 
@@ -124,7 +123,7 @@ if (texto != null)
 
         // Aplicar spoiler e cor do spoiler
         SpoilerSwitcher spoilerSwitcher = FindObjectOfType<SpoilerSwitcher>();
-        if (spoilerSwitcher != null)
+        if (spoilerSwitcher != null && data.idSpoiler >= 0)
         {
             spoilerSwitcher.AplicarSpoiler(data.idSpoiler);
 

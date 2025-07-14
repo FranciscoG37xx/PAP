@@ -9,6 +9,8 @@ public class SpoilerColorToggle : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip somPintar;
 
+    public bool usarCorDoCarro = false;
+
     private Color corSecundaria = new Color(0.05f, 0.05f, 0.05f); // Fibra de carbono
     private Color ultimaCorUsada = Color.black; // Guarda a última cor aplicada
 
@@ -34,6 +36,7 @@ public class SpoilerColorToggle : MonoBehaviour
                 if (mat.HasProperty("_Color") && CoresIguais(mat.color, corPrimaria))
                 {
                     algumComCorDoCarro = true;
+                    usarCorDoCarro = true; // Define que a cor do carro está a ser usada
                     break;
                 }
             }

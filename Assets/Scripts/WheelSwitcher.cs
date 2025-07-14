@@ -21,6 +21,8 @@ public class WheelSwitcher : MonoBehaviour
     public float[] ajusteProfundidadePorJantePorsche;
     private float[] profundidadesAtuais = null;
     public Material materialJante;
+    public Renderer jantePintavel;
+    public Color corPinturaAtual = Color.white;
 
     // Controle de preço por troca de jante
     private bool precoAplicadoJante = false;
@@ -197,18 +199,18 @@ public class WheelSwitcher : MonoBehaviour
         }
 
         if (HistoricoManager.Instance != null && currentIndex != 0)
-{
-    HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
-        "Jante trocada",
-        index, // o ID da jante
-        null,
-        -1,
-        null,
-        null
-    ));
-}
+        {
+            HistoricoManager.Instance.GuardarHistorico(new CustomizacaoData(
+                "Jante trocada",
+                index, // o ID da jante
+                null,
+                -1,
+                null,
+                null
+            ));
+        }
 
-      currentIndex = index;
+        currentIndex = index;
 
     }
 
@@ -255,15 +257,31 @@ public class WheelSwitcher : MonoBehaviour
         }
     }
 
-public void AplicarJante(int id)
-{
-    if (id >= 0 && id < wheelPrefabs.Length)
+    public void AplicarJante(int id)
     {
-        SwitchWheels(id); // este método já existe e troca a jante
+        if (id >= 0 && id < wheelPrefabs.Length)
+        {
+            SwitchWheels(id); // este método já existe e troca a jante
+        }
+        else
+        {
+            Debug.LogWarning("ID de jante inválido ao restaurar histórico: " + id);
+        }
+    }
+
+    public int JanteAtualID => currentIndex;
+    public bool JanteEstaPintada => corJanteSelecionada != Color.white;
+
+public void PintarJante()
+{
+    if (jantePintavel != null)
+    {
+        jantePintavel.material.color = corPinturaAtual;
+        corJanteSelecionada = corPinturaAtual; // Atualiza o estado da cor pintada
     }
     else
     {
-        Debug.LogWarning("ID de jante inválido ao restaurar histórico: " + id);
+        Debug.LogWarning("Objeto de jante pintável não definido.");
     }
 }
 

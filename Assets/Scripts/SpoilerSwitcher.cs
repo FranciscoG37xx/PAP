@@ -143,9 +143,11 @@ public class SpoilerSwitcher : MonoBehaviour
             Debug.LogWarning("ID de spoiler inválido ao restaurar histórico: " + id);
         }
 
-        
 
-}
+
+    }
+
+public int SpoilerAtualID => currentIndex;
 
 }
 
