@@ -22,13 +22,24 @@ public class CarregadorDeModificacoes : MonoBehaviour
             yield break;
         }
 
+        // Dados a carregar
+        string carroID = null;
+        string corHex = null;
+        int janteID = 0;
+        bool pintarJante = false;
+        int spoilerID = 0;
+        float precoTotal = 0f;
+        bool encontrou = false;
+
+        // Parte 1: carregar da base de dados
         string connectionString = "Server=localhost;Database=autorevamp_bd;User Id=root;Password=;SslMode=None;";
         using (MySqlConnection conn = new MySqlConnection(connectionString))
         {
             try
             {
                 conn.Open();
-                string query = "SELECT * FROM modificacoes WHERE user_id = @user_id LIMIT 1";
+                string query = "SELECT * FROM modificacoes WHERE user_id = @user_id";
+
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@user_id", UserSession.UserID);
 
@@ -36,29 +47,13 @@ public class CarregadorDeModificacoes : MonoBehaviour
                 {
                     if (reader.Read())
                     {
-                        string carroID = reader.GetString("carro_id");
-                        string corHex = reader.GetString("cor_hex");
-                        int janteID = reader.GetInt32("jante_id");
-                        bool pintarJante = reader.GetBoolean("pintar_jante");
-                        int spoilerID = reader.GetInt32("spoiler_id");
-                        float precoTotal = reader.GetFloat("preco_total");
-
-                        // Aplicar dados
-                        carSelector.SelecionarCarroPorID(carroID); // Tem de existir esse método
-
-
-                        corManager.AplicarCorHex(corHex);
-                        wheelSwitcher.SwitchWheels(janteID);
-                        if (pintarJante)
-                        {
-                            wheelSwitcher.PintarJante(); // se tiver método separado
-                        }
-                        spoilerSwitcher.AplicarSpoiler(spoilerID);
-                        carSelector.DefinirPreco(precoTotal); // método para definir preço manualmente
-                    }
-                    else
-                    {
-                        Debug.Log("Nenhuma modificação encontrada para este utilizador.");
+                        carroID = reader.GetString("carro_id");
+                        corHex = reader.GetString("cor_hex");
+                        janteID = reader.GetInt32("jante_id");
+                        pintarJante = reader.GetBoolean("pintar_jante");
+                        spoilerID = reader.GetInt32("spoiler_id");
+                        precoTotal = reader.GetFloat("preco_total");
+                        encontrou = true;
                     }
                 }
             }
@@ -66,9 +61,31 @@ public class CarregadorDeModificacoes : MonoBehaviour
             {
                 Debug.LogError("Erro ao carregar modificações: " + ex.Message);
             }
-            
-            yield return new WaitForSeconds(0.2f); // Esperar para o carro carregar corretamente
+        }
+
+        // Parte 2: aplicar se encontrou modificações
+        if (encontrou)
+        {
+            carSelector.SelecionarCarroPorID(carroID);
+            yield return new WaitUntil(() => carSelector.CarregamentoConcluido());
+
+            corManager.AplicarCorHex(corHex);
+            wheelSwitcher.SwitchWheels(janteID);
+            yield return null;
+
+            if (pintarJante && wheelSwitcher.JanteEstaPronta())
+            {
+                wheelSwitcher.PintarJante();
+            }
+
+            spoilerSwitcher.AplicarSpoiler(spoilerID);
+            carSelector.DefinirPreco(precoTotal);
+        }
+        else
+        {
+            Debug.Log("Nenhuma modificação encontrada para este utilizador.");
         }
     }
 }
+
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class CarSelector : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class CarSelector : MonoBehaviour
         public Vector3 correcaoSpoilerRotacao = Vector3.zero;
         public Material materialCorOriginal;
     }
+
+    public Button pinturaButton;
+    public Button jantesButton;
+    public Button spoilerButton;
 
     [Header("Referências")]
     public CarOption[] carrosDisponiveis;
@@ -39,6 +44,9 @@ public class CarSelector : MonoBehaviour
 
     void Start()
     {
+        pinturaButton.interactable = false;
+        jantesButton.interactable = false;
+        spoilerButton.interactable = false;
         dropdown.ClearOptions();
         dropdown.options.Add(new TMP_Dropdown.OptionData("Escolher carro..."));
 
@@ -271,25 +279,39 @@ public class CarSelector : MonoBehaviour
         return carroAtual != null ? carroAtual.name : "";
     }
 
-public void SelecionarCarroPorID(string id)
-{
-    for (int i = 0; i < carrosDisponiveis.Length; i++)
-{
-    if (carrosDisponiveis[i].cenaInstance != null && carrosDisponiveis[i].cenaInstance.name == id)
+    public void SelecionarCarroPorID(string id)
     {
-        OnCarroSelecionado(i + 1); // Usa o método correto para selecionar
-        return;
+        for (int i = 0; i < carrosDisponiveis.Length; i++)
+        {
+            if (carrosDisponiveis[i].cenaInstance != null && carrosDisponiveis[i].cenaInstance.name == id)
+            {
+                OnCarroSelecionado(i + 1); // Usa o método correto para selecionar
+                return;
+            }
+        }
+
+        Debug.LogWarning("Carro com ID '" + id + "' não encontrado.");
+        AtivarBotoes();
     }
-}
 
-    Debug.LogWarning("Carro com ID '" + id + "' não encontrado.");
-}
+    public void DefinirPreco(float novoPreco)
+    {
+        precoAtual = novoPreco;
+        AtualizarPrecoUI(); // Atualiza o texto visível na UI, se tiveres
+    }
 
-public void DefinirPreco(float novoPreco)
-{
-    precoAtual = novoPreco;
-    AtualizarPrecoUI(); // Atualiza o texto visível na UI, se tiveres
-}
+    public bool CarregamentoConcluido()
+    {
+        return carroAtual != null;
+    }
+
+private void AtivarBotoes()
+    {
+        pinturaButton.interactable = true;
+        jantesButton.interactable = true;
+        spoilerButton.interactable = true;
+    }
+
 
 
 

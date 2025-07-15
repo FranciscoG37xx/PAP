@@ -9517,6 +9517,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fae0cda18ee98642a46641f5ba52254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pinturaButton: {fileID: 923510456}
+  jantesButton: {fileID: 2053517451}
+  spoilerButton: {fileID: 2083451164}
   carrosDisponiveis:
   - nome: Audi A7 SportBack 2020
     cenaInstance: {fileID: 909755825}

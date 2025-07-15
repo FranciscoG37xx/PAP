@@ -272,18 +272,24 @@ public class WheelSwitcher : MonoBehaviour
     public int JanteAtualID => currentIndex;
     public bool JanteEstaPintada => corJanteSelecionada != Color.white;
 
-public void PintarJante()
+    public void PintarJante()
+    {
+        if (jantePintavel != null)
+        {
+            jantePintavel.material.color = corPinturaAtual;
+            corJanteSelecionada = corPinturaAtual; // Atualiza o estado da cor pintada
+        }
+        else
+        {
+            Debug.LogWarning("Objeto de jante pintável não definido.");
+        }
+    }
+
+public bool JanteEstaPronta()
 {
-    if (jantePintavel != null)
-    {
-        jantePintavel.material.color = corPinturaAtual;
-        corJanteSelecionada = corPinturaAtual; // Atualiza o estado da cor pintada
-    }
-    else
-    {
-        Debug.LogWarning("Objeto de jante pintável não definido.");
-    }
+    return jantePintavel != null;
 }
+
 
 
 
