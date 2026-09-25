@@ -23,5 +23,5 @@ from scratch specifically for this project. It includes:
 
 ## Notes
 This repository contains the Unity source project. A standalone Windows build 
-is available under [Releases](link-to-your-release), rather than committed 
+is available under [Releases](https://github.com/FranciscoG37xx/PAP/releases/tag/PAP), rather than committed 
 directly to the repo.
